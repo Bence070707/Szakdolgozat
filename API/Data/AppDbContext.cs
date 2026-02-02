@@ -20,6 +20,10 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                     "CK_Key_PriceType",
                     "PriceType IN (1, 2, 3)"
                 );
+                t.HasCheckConstraint(
+                    "CK_Key_Quantity",
+                    "Quantity > 0"
+                );
             });
         });
     }

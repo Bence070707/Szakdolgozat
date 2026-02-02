@@ -2,6 +2,7 @@
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260202121343_Keys-Quantit-Added")]
+    partial class KeysQuantitAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
@@ -47,8 +50,6 @@ namespace API.Data.Migrations
                     b.ToTable("Keys", t =>
                         {
                             t.HasCheckConstraint("CK_Key_PriceType", "PriceType IN (1, 2, 3)");
-
-                            t.HasCheckConstraint("CK_Key_Quantity", "Quantity > 0");
                         });
                 });
 #pragma warning restore 612, 618

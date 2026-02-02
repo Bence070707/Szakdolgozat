@@ -1,0 +1,60 @@
+@if (keys() && keys()?.items?.length! > 0) {
+<p class="text-center font-serif text-2xl font-semibold">Kulcsok</p>
+@if(keys()?.metadata; as metadata){
+    <app-paginator
+    [pageNumber]="metadata.currentPage"
+    [totalCount]="metadata.totalCount"
+    [pageSize]="metadata.pageSize"
+    (pageChange)="onPageChange($event)"
+    [totalPages]="metadata.totalPages"
+    >
+
+    </app-paginator>
+}
+<div class="flex flex-col gap-2 mb-4">
+    @for (key of keys()?.items; track $index) {
+    <div class="collapse collapse-arrow bg-base-100 border border-base-300 shadow transition-transform duration-300 hover:scale-101">
+        <input type="checkbox" name="my-accordion-2" />
+        <div class="collapse-title flex justify-between">
+            <div class="flex flex-col">
+                <p class="font-semibold text-base-content">Silca kód</p>
+                <div class="divider my-1"></div>
+                <p>{{key.silcaCode}}</p>
+            </div>
+            <div class="flex flex-col">
+                <p class="font-semibold text-base-content">Errebi kód</p>
+                <div class="divider my-1"></div>
+                <p>{{key.errebiCode || 'asd'}}</p>
+            </div>
+            <div class="flex flex-col">
+                <p class="font-semibold text-base-content">Jma kód</p>
+                <div class="divider my-1"></div>
+                <p>{{key.jmaCode || 'asd'}}</p>
+            </div>
+            <div class="flex flex-col mr-4">
+                <p class="font-semibold text-base-content">Ár</p>
+                <div class="divider my-1"></div>
+                <p>{{key.price}}</p>
+            </div>
+            <div class="flex flex-col mr-4">
+                <p class="font-semibold text-base-content">Készleten</p>
+                <div class="divider my-1"></div>
+                <p>{{key.quantity}}</p>
+            </div>
+        </div>
+        <div class="collapse-content
+        transition-all duration-1000 ease-in-out h-0 overflow-hidden peer-checked:h-48">
+            <a routerLink="/stocks/keys/{{key.id}}" class="btn btn-primary w-full">RÉSZLETEK
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                </svg>
+
+            </a>
+        </div>
+    </div>
+    }
+</div>
+Sarkak
+}

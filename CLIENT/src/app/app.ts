@@ -1,25 +1,14 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
+import { Header } from "./partials/header/header";
+import { RouterOutlet } from "@angular/router";
+import { Footer } from "./partials/footer/footer";
 
 @Component({
   selector: 'app-root',
-  imports: [],
+  imports: [Header, RouterOutlet, Footer],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App implements OnInit {
-  private http = inject(HttpClient);
+export class App{
   protected readonly title = signal('CLIENT');
-  protected keys = signal<any>(null);
-
-  ngOnInit(): void {
-    this.http.get('https://localhost:5001/stocks').subscribe(
-      {
-        next: response => {
-          this.keys.set(response);
-        }
-        
-      }
-    )
-  }
 }

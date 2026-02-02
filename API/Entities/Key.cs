@@ -11,4 +11,5 @@ public class Key
     public string ErrebiCode { get; set; } = "";
     public string JmaCode { get; set; } = "";
     public required int Price { get; set; }
+    public required int Quantity { get; set; }
 }

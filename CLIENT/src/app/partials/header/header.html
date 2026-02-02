@@ -1,0 +1,13 @@
+<div class="navbar bg-base-100 shadow-base-300 shadow flex justify-between">
+    <a class="btn btn-ghost text-base-content">Cipőkulcs</a>
+    @if (busyService.busyRequestCount() > 0) {
+
+    <span class="loading loading-spinner loading-xl text-error"></span>
+    }
+    <div>
+        <a routerLink="" class="btn btn-ghost text-base-content">Főoldal</a>
+        <a routerLink="/stocks" class="btn btn-ghost text-base-content">Készlet</a>
+        <a class="btn btn-ghost text-base-content">Eladás</a>
+        <a class="btn btn-ghost text-base-content">Bevételezés</a>
+    </div>
+</div>

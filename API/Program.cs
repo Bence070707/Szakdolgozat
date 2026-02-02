@@ -1,4 +1,5 @@
 using API.Data;
+using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddCors();
+builder.Services.AddScoped<IKeysRepository, KeysRepository>();
 
 var app = builder.Build();
 
@@ -21,7 +23,7 @@ app.UseCors(x =>
 {
     x.AllowAnyHeader()
      .AllowAnyMethod()
-     .WithOrigins("http://localhost:4200");
+     .WithOrigins("https://localhost:4200");
 });
 if (app.Environment.IsDevelopment())
 {

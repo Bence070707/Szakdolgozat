@@ -1,0 +1,22 @@
+@if (currentKey(); as key) {
+<div class="flex gap-4">
+    <div class="w-1/2 shadow-md rounded">
+        <img class="w-full h-[80vh] border border-base-300 rounded-lg" src="fallback.jpg" alt="image of the key">
+    </div>
+    <div class="w-1/2 bg-base-200 p-4 rounded-lg shadow-md">
+        <h1 class="text-3xl font-bold mb-4">Kulcs Részletek</h1>
+        <div class="mb-2">
+            <span class="font-semibold">Silca kód:</span> {{key.silcaCode}}
+        </div>
+        <div class="mb-2">
+            <span class="font-semibold">Errebi kód:</span> {{key.errebiCode || 'N/A'}}
+        </div>
+        <div class="mb-2">
+            <span class="font-semibold">Jma kód:</span> {{key.jmaCode || 'N/A'}}
+        </div>
+        <div class="mb-2">
+            <span class="font-semibold">Ár:</span> {{key.price}}
+        </div>
+    </div>
+</div>
+}
