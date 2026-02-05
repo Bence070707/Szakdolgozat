@@ -1,0 +1,19 @@
+<div class="m-2 flex flex-col justify-between h-1/4 gap-2">
+    <img src="fallback.jpg" alt="Shoes" class="mask mask-decagon mb-2 transform duration-300 hover:scale-105" />
+    <div class="grid grid-cols-[auto_1fr_auto] items-center gap-2">
+        <p class="text-left">Kód</p>
+        <div class="divider opacity-15 m-0 divider-primary"></div>
+        <p class="text-right">{{ item().code }}</p>
+    </div>
+    <div class="grid grid-cols-[auto_1fr_auto] items-center gap-2">
+        <p class="text-left">Ár</p>
+        <div class="divider m-0 divider-primary opacity-15"></div>
+        <p class="text-right">{{item().unitPrice}}</p>
+    </div>
+    <div class="grid grid-cols-[auto_1fr_auto] items-center gap-2">
+        <p class="text-left">Készleten</p>
+        <div class="divider m-0 divider-primary opacity-15"></div>
+        <p class="text-right">{{item().quantity}}</p>
+    </div>
+    <button (click)="onAdd()" class="btn btn-primary btn-sm transform ease-in-out duration-300 hover:scale-102">Hozzáadás</button>
+</div>

@@ -1,0 +1,41 @@
+<div class="flex m-2 gap-2 h-screen">
+    <div
+        class="flex flex-wrap gap-2 w-2/3 justify-evenly bg-base-100 border border-base-200 shadow-lg rounded-lg overflow-y-auto">
+        @if(items().length > 0){
+        @for (item of items(); track $index) {
+        @if (isKey(item)) {
+        <div class="w-1/5">
+            <app-key-item (add)="addToSales($event)" [item]="item"></app-key-item>
+
+        </div>
+        }
+        @if (isHeel(item)) {
+        <div class="w-1/5">
+            <app-heel-item (add)="addToSales($event)" [item]="item"></app-heel-item>
+        </div>
+        }
+        }
+        }
+    </div>
+    <div class="w-1/3 bg-base-100 border border-base-200 shadow-lg rounded-lg overflow-y-auto">
+        @if (sales().length == 0) {
+        <div class="flex flex-col items-center gap-4">
+            <p class="text-2xl font-serif font-semibold text-base-content">Nincsenek eladások</p>
+            <img src="fallback.jpg" alt="Shoes" class="mask mask-decagon mb-2 transform duration-300 hover:scale-105" />
+        </div>
+        }
+        @else {
+            @for (item of sales(); track item.productId) {
+                @if(isHeel(item)){
+                    <div class="w-full">
+                        <app-heel-item-cart [item]="item" (delete)="deleteFromSales($event)" (add)="addToSales($event)" (decrement)="decrement($event)"></app-heel-item-cart>
+                    </div>
+                }
+                @if (isKey(item)) {
+                    <div class="w-full">
+                        <app-key-item-cart (delete)="deleteFromSales($event)" (decrement)="decrement($event)" (increment)="addToSales($event)" [item]="item"></app-key-item-cart>
+                    </div>
+                }
+            }
+        }
+    </div>

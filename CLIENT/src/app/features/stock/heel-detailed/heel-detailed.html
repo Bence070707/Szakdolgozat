@@ -1,4 +1,4 @@
-@if (currentKey(); as key) {
+@if (currentHeel(); as heel) {
 <div class="flex gap-4">
     <div class="w-1/2 shadow-md rounded">
         <img class="w-full h-[80vh] border border-base-300 rounded-lg" src="fallback.jpg" alt="image of the key">
@@ -9,21 +9,15 @@
     <div class="w-1/2 bg-base-200 p-4 rounded-lg shadow-md flex flex-col justify-between">
         <div class="flex justify-between">
             <div>
-                <h1 class="text-3xl font-bold mb-4">Kulcs Részletek</h1>
+                <h1 class="text-3xl font-bold mb-4">Sarok Részletek</h1>
                 <div class="mb-2">
-                    <span class="font-semibold">Silca kód:</span> {{key.silcaCode}}
+                    <span class="font-semibold">Kód:</span> {{heel.code}}
                 </div>
                 <div class="mb-2">
-                    <span class="font-semibold">Errebi kód:</span> {{key.errebiCode || 'N/A'}}
+                    <span class="font-semibold">Ár:</span> {{heel.price}}
                 </div>
                 <div class="mb-2">
-                    <span class="font-semibold">Jma kód:</span> {{key.jmaCode || 'N/A'}}
-                </div>
-                <div class="mb-2">
-                    <span class="font-semibold">Ár:</span> {{key.price}}
-                </div>
-                <div class="mb-2">
-                    <span class="font-semibold">Készleten:</span> {{key.quantity}}
+                    <span class="font-semibold">Készleten:</span> {{heel.quantity}}
                 </div>
             </div>
             <div>
@@ -43,21 +37,17 @@
                 </svg></button>
     </div>
     }@else {
-    <form class="flex flex-col gap-4 w-1/2" [formGroup]="keyForm" (ngSubmit)="updateKey(key.id)">
+    <form class="flex flex-col gap-4 w-1/2" [formGroup]="heelForm" (ngSubmit)="updateHeel(heel.id)">
         <fieldset class="fieldset">
             <legend class="fieldset-legend">Ár:</legend>
             <input type="number" class="input w-full" placeholder="Ár" formControlName="price" />
         </fieldset>
         <fieldset class="fieldset">
-            <legend class="fieldset-legend">Ár típus:</legend>
-            <input type="number" class="input w-full" placeholder="Ár típus" formControlName="priceType" />
-        </fieldset>
-        <fieldset class="fieldset">
-            <legend class="fieldset-legend">Készleten</legend>
+            <legend class="fieldset-legend">Készleten:</legend>
             <input type="number" class="input w-full" placeholder="Készleten" formControlName="quantity" />
         </fieldset>
         <div class="join">
-            <button [disabled]="!keyForm.valid || keyForm.untouched"
+            <button [disabled]="!heelForm.valid || heelForm.untouched"
                 class="btn btn-primary w-1/2 self-center join-item rounded-l-full" type="submit">Szerkesztés<svg
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-5">

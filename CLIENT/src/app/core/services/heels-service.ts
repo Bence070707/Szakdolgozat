@@ -1,34 +1,33 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Key } from '../../../types/Key';
 import { environment } from '../../../environments/environment.development';
 import { PaginatedResult } from '../../../types/Pagination';
+import { Heel } from '../../../types/Heel';
 
 @Injectable({
   providedIn: 'root',
 })
-export class KeysService {
+export class HeelsService {
   private http = inject(HttpClient);
   private url = environment.apiUrl;
 
-  getKeys(pageNumber = 1, pageSize = 5) {
+  getHeels(pageNumber = 1, pageSize = 5) {
     let params = new HttpParams();
 
     params = params.append('pageNumber', pageNumber);
     params = params.append('pageSize', pageSize);
-    return this.http.get<PaginatedResult<Key>>(this.url + 'keys', { params });
+    return this.http.get<PaginatedResult<Heel>>(this.url + 'heels', { params });
   }
 
-  getKeyById(id: string | null) {
-    return this.http.get<Key>(this.url + 'keys/' + id);
+  getHeelById(id: string | null) {
+    return this.http.get<Heel>(this.url + 'heels/' + id);
   }
 
-  updateKey(id: string, key: Key) {
-    return this.http.put<Key>(this.url + 'keys/' + id, key)
+  updateHeel(id: string, key: Heel) {
+    return this.http.put<Heel>(this.url + 'heels/' + id, key)
   }
 
-  getAllKeys() {
-    return this.http.get<Key[]>(this.url + 'keys/' + 'getallkeys');
-
+  getAllHeels(){
+    return this.http.get<Heel[]>(this.url + 'heels/' + 'getallheels');
   }
 }
