@@ -27,11 +27,12 @@ export class KeyToSellUI implements SellableItemUI {
         this.imageUrl = key.imageUrl ?? 'fallback.jpg';
 
         this.unitPrice = key.price;
-        this.quantity = 1;
+        this.quantity = key.quantity;
 
         this.errebiCode = key.errebiCode;
         this.jmaCode = key.jmaCode;
     }
+
 }
 
 export class HeelToSellUI implements SellableItemUI {
@@ -51,6 +52,6 @@ export class HeelToSellUI implements SellableItemUI {
         this.imageUrl = heel.imageUrl ?? 'fallback.jpg';
 
         this.unitPrice = heel.price;
-        this.quantity = 1;
+        this.quantity = heel.quantity;
     }
 }

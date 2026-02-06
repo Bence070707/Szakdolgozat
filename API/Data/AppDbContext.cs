@@ -9,6 +9,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Key> Keys { get; set; }
     public DbSet<Heel> Heels { get; set; }
+    public DbSet<Sale> Sales { get; set; }
+    public DbSet<SaleItem> SaleItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -24,9 +26,14 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 );
                 t.HasCheckConstraint(
                     "CK_Key_Quantity",
-                    "Quantity > 0"
+                    "Quantity >= 0"
                 );
             });
         });
+        
+        modelBuilder.Entity<Sale>()
+        .HasMany(s => s.Items)
+        .WithOne(si => si.Sale)
+        .HasForeignKey(si => si.SaleId);
     }
 }
