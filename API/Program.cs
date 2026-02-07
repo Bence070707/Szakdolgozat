@@ -17,6 +17,7 @@ builder.Services.AddCors();
 builder.Services.AddScoped<IKeysRepository, KeysRepository>();
 builder.Services.AddScoped<IHeelsRepository, HeelsRepository>();
 builder.Services.AddScoped<ISalesRepository, SalesRepository>();
+builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
 
 var app = builder.Build();
 

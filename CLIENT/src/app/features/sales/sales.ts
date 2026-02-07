@@ -130,7 +130,7 @@ export class Sales implements OnInit {
         !(s.productId === item.productId && s.type === item.type)
       )
     )
-    this.toastService.info('Termék eltávolítva a kosárból.');
+    this.toastService.info('Termék eltávolítva az eladásokból.');
   }
 
   decrement(item: SellableItemUI) {
@@ -144,7 +144,7 @@ export class Sales implements OnInit {
       }
 
       if (existing.quantity === 1) {
-        this.toastService.info('Termék eltávolítva a kosárból.');
+        this.toastService.info('Termék eltávolítva az eladásokból.');
         return sales.filter(
           s => !(s.productId === item.productId && s.type === item.type)
         );
