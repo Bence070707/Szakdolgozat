@@ -1,12 +1,23 @@
 <div class="tabs tabs-lift m-4">
-  <input type="radio" name="my_tabs_3" class="tab" aria-label="Tab 1" />
+  <input type="radio" name="tabs" class="tab" aria-label="Piszkozatok" (change)="activeTab.set('drafts')"
+    [checked]="activeTab() === 'drafts'"/>
+  <div class="tab-content bg-base-100 border-base-300 p-6 h-[85vh] rounded-2xl rounded-tl-none">
+    @if (activeTab() === 'drafts') {
+    <app-drafts></app-drafts>
+    }
+  </div>
+
+  <input type="radio" name="tabs" class="tab" aria-label="Új bevételezés" (change)="activeTab.set('new')"
+    [checked]="activeTab() === 'new'" />
   <div class="tab-content bg-base-100 border-base-300 p-6 h-[85vh]">
-    Tab content 1
-</div>
+    @if (activeTab() === 'new') {
+    }
+  </div>
 
-  <input type="radio" name="my_tabs_3" class="tab" aria-label="Tab 2" checked="checked" />
-  <div class="tab-content bg-base-100 border-base-300 p-6">Tab content 2</div>
-
-  <input type="radio" name="my_tabs_3" class="tab" aria-label="Tab 3" />
-  <div class="tab-content bg-base-100 border-base-300 p-6">Tab content 3</div>
+  <input type="radio" name="tabs" class="tab" aria-label="Előzmények" (change)="activeTab.set('history')"
+    [checked]="activeTab() === 'history'" />
+  <div class="tab-content bg-base-100 border-base-300 p-6 h-[85vh]">
+    @if (activeTab() === 'history') {
+    }
+  </div>
 </div>

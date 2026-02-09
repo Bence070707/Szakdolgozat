@@ -32,10 +32,31 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 );
             });
         });
-        
+
         modelBuilder.Entity<Sale>()
         .HasMany(s => s.Items)
         .WithOne(si => si.Sale)
         .HasForeignKey(si => si.SaleId);
+    }
+
+    public override Task<int> SaveChangesAsync(
+    bool acceptAllChangesOnSuccess,
+    CancellationToken cancellationToken = default)
+    {
+        foreach (var entry in ChangeTracker.Entries<PurchaseOrder>())
+        {
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.UpdatedAt = DateTime.UtcNow;
+            }
+
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.CreatedAt = DateTime.UtcNow;
+                entry.Entity.UpdatedAt = DateTime.UtcNow;
+            }
+        }
+
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 }

@@ -1,4 +1,6 @@
 using System;
+using API.DTOs;
+using API.Enums;
 
 namespace API.Entities;
 
@@ -6,6 +8,7 @@ public class PurchaseOrder
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public string CreatedBy { get; set; } = "System";
     public PurchaseOrderStatus PurchaseOrderStatus { get; set; }
     public DateTime? SentAt { get; set; }
@@ -14,9 +17,24 @@ public class PurchaseOrder
     public ICollection<PurchaseOrderItem> Items { get; set; } = [];
 }
 
-public enum PurchaseOrderStatus {
-    DRAFT = 1,
-    SEND = 2,
-    RECEIVED = 3,
-    CANCELLED = 4
+public static class PurchaseOrderExtensions
+{
+    extension(PurchaseOrder purchaseOrder)
+    {
+        public OrderDTO ToDTO()
+        {
+            return new OrderDTO
+            {
+                Id = purchaseOrder.Id,
+                Items = [.. purchaseOrder.Items.Select(o => new PurchaseOrderItemDTO
+                {
+                    KeyId = o.KeyId!,
+                    Quantity = o.Quantity
+                })],
+                Note = purchaseOrder.Note,
+                PurchaseOrderStatus = purchaseOrder.PurchaseOrderStatus,
+                UpdatedAt = purchaseOrder.UpdatedAt
+            };
+        }
+    }
 }
