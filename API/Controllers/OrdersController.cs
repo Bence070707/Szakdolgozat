@@ -18,10 +18,10 @@ namespace API.Controllers
         }
 
         [HttpPost("draft")]
-        public async Task<ActionResult<string>> CreateDraft()
+        public async Task<ActionResult<OrderDTO>> CreateDraft()
         {
-            var id = await orderRepository.CreateDraft();
-            return Ok(id);
+            var order = await orderRepository.CreateDraft();
+            return Ok(order);
         }
 
         [HttpGet("{id}")]
@@ -45,6 +45,14 @@ namespace API.Controllers
         {
             var order = await orderRepository.GetDrafts();
             return Ok(order.Select(o => o.ToDTO()));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteOrder(string id)
+        {
+            var result = await orderRepository.DeleteOrder(id);
+            if (!result) return NotFound("Nem található rendelés.");
+            return NoContent();
         }
     }
 }

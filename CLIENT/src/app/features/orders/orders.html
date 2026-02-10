@@ -11,6 +11,7 @@
     [checked]="activeTab() === 'new'" />
   <div class="tab-content bg-base-100 border-base-300 p-6 h-[85vh]">
     @if (activeTab() === 'new') {
+      <app-new-order (tab)="changeTab($event)"></app-new-order>
     }
   </div>
 

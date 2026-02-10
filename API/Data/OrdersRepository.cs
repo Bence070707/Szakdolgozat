@@ -9,7 +9,7 @@ namespace API.Data;
 
 public class OrdersRepository(AppDbContext context) : IOrdersRepository
 {
-    public async Task<string> CreateDraft()
+    public async Task<OrderDTO> CreateDraft()
     {
         var order = new PurchaseOrder
         {
@@ -17,7 +17,7 @@ public class OrdersRepository(AppDbContext context) : IOrdersRepository
         };
         context.PurchaseOrders.Add(order);
         await context.SaveChangesAsync();
-        return order.Id;
+        return order.ToDTO();
     }
 
     public async Task CreateOrderAsync(CreatePurchaseOrderDTO createPurchaseOrderDTO)
@@ -38,6 +38,14 @@ public class OrdersRepository(AppDbContext context) : IOrdersRepository
         await context.SaveChangesAsync();
     }
 
+    public async Task<bool> DeleteOrder(string id)
+    {
+        var order = await context.PurchaseOrders.FindAsync(id);
+        if (order is null) return false;
+        context.PurchaseOrders.Remove(order);
+        return await context.SaveChangesAsync() > 0;
+    }
+
     public async Task<IReadOnlyList<PurchaseOrder>> GetDrafts()
     {
         return await context.PurchaseOrders
@@ -48,7 +56,7 @@ public class OrdersRepository(AppDbContext context) : IOrdersRepository
 
     public async Task<PurchaseOrder?> GetOrderById(string id)
     {
-        return await context.PurchaseOrders.FindAsync(id);
+        return await context.PurchaseOrders.Include(x => x.Items).FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<bool> UpdateOrder(string id, OrderDTO orderDTO)
@@ -61,9 +69,10 @@ public class OrdersRepository(AppDbContext context) : IOrdersRepository
 
         order.Note = orderDTO.Note;
         order.PurchaseOrderStatus = orderDTO.PurchaseOrderStatus;
+        order.SupplierEmail = orderDTO.SupplierEmail;
 
         var itemsToRemove = order.Items
-            .Where(i => !orderDTO.Items.Any(d => d.KeyId == i.KeyId))
+            .Where(i => !orderDTO.Items.Any(d => d.Id == i.KeyId))
             .ToList();
 
         foreach (var item in itemsToRemove)
@@ -74,13 +83,13 @@ public class OrdersRepository(AppDbContext context) : IOrdersRepository
         foreach (var dtoItem in orderDTO.Items)
         {
             var existing = order.Items
-                .FirstOrDefault(i => i.KeyId == dtoItem.KeyId);
+                .FirstOrDefault(i => i.KeyId == dtoItem.Id);
 
             if (existing is null)
             {
                 order.Items.Add(new PurchaseOrderItem
                 {
-                    KeyId = dtoItem.KeyId,
+                    KeyId = dtoItem.Id,
                     Quantity = dtoItem.Quantity
                 });
             }

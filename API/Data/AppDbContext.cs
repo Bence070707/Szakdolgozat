@@ -37,6 +37,12 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         .HasMany(s => s.Items)
         .WithOne(si => si.Sale)
         .HasForeignKey(si => si.SaleId);
+
+        modelBuilder.Entity<PurchaseOrder>()
+        .HasMany(o => o.Items)
+        .WithOne(o=>o.PurchaseOrder)
+        .HasForeignKey(o => o.PurchaseOrderId)
+        .OnDelete(DeleteBehavior.Cascade);
     }
 
     public override Task<int> SaveChangesAsync(

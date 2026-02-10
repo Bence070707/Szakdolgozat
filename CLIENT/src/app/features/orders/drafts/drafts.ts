@@ -3,6 +3,7 @@ import { OrderService } from '../../../core/services/order-service';
 import { Order } from '../../../../types/Order';
 import { RouterLink } from "@angular/router";
 import { DatePipe } from '@angular/common';
+import { ToastService } from '../../../core/services/toast-service';
 
 @Component({
   selector: 'app-drafts',
@@ -10,22 +11,23 @@ import { DatePipe } from '@angular/common';
   templateUrl: './drafts.html',
   styleUrl: './drafts.css',
 })
-export class Drafts implements OnInit{
+export class Drafts implements OnInit {
   private orderService = inject(OrderService);
-  protected drafts = signal<Order[] | null>(null);
-  
+  private toastService = inject(ToastService);
+  drafts = this.orderService.drafts;
+  loading = this.orderService.draftsLoading;
+
   ngOnInit(): void {
-    this.getDrafts();
+    this.orderService.loadDrafts();
   }
-  
-  getDrafts(){
-    this.orderService.getDrafts().subscribe({
-      next: response => {
-        this.drafts.set(response);
+
+  deleteDraft(id: string) {
+    this.orderService.deleteOrder(id).subscribe({
+      next: () => {
+        this.toastService.success('Sikeresen törölve!')
+        this.orderService.loadDrafts();
       },
-      error: err =>{
-        console.log(err);      
-      }
+      error: () => this.toastService.error('Hiba történt!')
     })
   }
 }

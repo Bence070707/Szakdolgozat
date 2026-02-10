@@ -14,6 +14,7 @@ public class PurchaseOrder
     public DateTime? SentAt { get; set; }
     public DateTime? ReceivedAt { get; set; }
     public string? Note { get; set; }
+    public string? SupplierEmail { get; set; }
     public ICollection<PurchaseOrderItem> Items { get; set; } = [];
 }
 
@@ -28,13 +29,16 @@ public static class PurchaseOrderExtensions
                 Id = purchaseOrder.Id,
                 Items = [.. purchaseOrder.Items.Select(o => new PurchaseOrderItemDTO
                 {
-                    KeyId = o.KeyId!,
+                    Id = o.KeyId!,
                     Quantity = o.Quantity
                 })],
                 Note = purchaseOrder.Note,
                 PurchaseOrderStatus = purchaseOrder.PurchaseOrderStatus,
-                UpdatedAt = purchaseOrder.UpdatedAt
+                UpdatedAt = purchaseOrder.UpdatedAt,
+                CreatedAt = purchaseOrder.CreatedAt,
+                SupplierEmail = purchaseOrder.SupplierEmail
             };
         }
+
     }
 }

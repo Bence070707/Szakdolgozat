@@ -2,8 +2,10 @@ export type Order = {
     id: string,
     items: OrderItem[],
     note?: string,
+    supplierMail: string,
     purchaseOrderStatus: PurchaseOrderStatus,
     updatedAt: Date
+    createdAt: Date
 }
 
 export type OrderItem = {
