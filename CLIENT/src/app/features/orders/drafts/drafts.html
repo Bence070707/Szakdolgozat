@@ -13,7 +13,7 @@
                 </tr>
             </thead>
             <tbody>
-                @for (draft of drafts(); track draft.items.length) {
+                @for (draft of drafts(); track draft.id) {
                 <tr>
                     <th>{{$index + 1 }}</th>
                     <td>{{draft.note || 'Nincs megjegyzés'}}</td>

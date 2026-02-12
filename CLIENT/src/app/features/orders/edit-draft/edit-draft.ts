@@ -27,7 +27,6 @@ export class EditDraft implements OnInit {
         },
         error: err => {
           console.log(err);
-
         }
       });
 

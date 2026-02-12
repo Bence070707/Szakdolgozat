@@ -2,6 +2,7 @@ using System;
 using API.DTOs;
 using API.Entities;
 using API.Enums;
+using API.Helpers;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -59,16 +60,46 @@ public class OrdersRepository(AppDbContext context) : IOrdersRepository
         return await context.PurchaseOrders.Include(x => x.Items).FirstOrDefaultAsync(x => x.Id == id);
     }
 
+    public async Task<PaginatedResult<OrderDTO>> GetOrders(PagingParams pagingParams)
+    {
+        var query = context.PurchaseOrders
+            .Include(x => x.Items)
+            .AsNoTracking()
+            .Select(o => o.ToDTO());
+
+        return await PaginationHelper.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
+    }
+
+    public async Task<bool> SubmitOrder(string id, OrderDTO orderDTO)
+    {
+        var order = await UpdateOrderAsync(id, orderDTO);
+        if (order is null) return false;
+
+        order.PurchaseOrderStatus = PurchaseOrderStatus.SEND;
+
+        return await context.SaveChangesAsync() > 0;
+    }
+
     public async Task<bool> UpdateOrder(string id, OrderDTO orderDTO)
+    {
+        var order = await UpdateOrderAsync(id, orderDTO);
+        if (order is null) return false;
+
+        order.PurchaseOrderStatus = PurchaseOrderStatus.DRAFT;
+
+        return await context.SaveChangesAsync() > 0;
+    }
+
+
+    private async Task<PurchaseOrder?> UpdateOrderAsync(string id, OrderDTO orderDTO)
     {
         var order = await context.PurchaseOrders
             .Include(o => o.Items)
             .FirstOrDefaultAsync(o => o.Id == id);
 
-        if (order is null) return false;
-
+        if (order is null) return null;
+        if(order.PurchaseOrderStatus == PurchaseOrderStatus.SEND) return order;
         order.Note = orderDTO.Note;
-        order.PurchaseOrderStatus = orderDTO.PurchaseOrderStatus;
         order.SupplierEmail = orderDTO.SupplierEmail;
 
         var itemsToRemove = order.Items
@@ -99,6 +130,7 @@ public class OrdersRepository(AppDbContext context) : IOrdersRepository
             }
         }
         context.Entry(order).State = EntityState.Modified;
-        return await context.SaveChangesAsync() > 0;
+        await context.SaveChangesAsync();
+        return order;
     }
 }

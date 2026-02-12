@@ -1,5 +1,6 @@
 using API.DTOs;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,13 @@ namespace API.Controllers
         {
             await orderRepository.CreateOrderAsync(createPurchaseOrderDTO);
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<PaginatedResult<OrderDTO>>> GetOrders([FromQuery]PagingParams pagingParams)
+        {
+            var orders = await orderRepository.GetOrders(pagingParams);
+            return Ok(orders);
         }
 
         [HttpPost("draft")]
@@ -54,5 +62,14 @@ namespace API.Controllers
             if (!result) return NotFound("Nem található rendelés.");
             return NoContent();
         }
+
+        [HttpPost("{id}/submit")]
+        public async Task<ActionResult> SubmitOrder(string id, OrderDTO orderDTO)
+        {
+            var result = await orderRepository.SubmitOrder(id, orderDTO);
+            if (!result) return NotFound("Nem található rendelés.");
+            return NoContent();
+        }
+
     }
 }

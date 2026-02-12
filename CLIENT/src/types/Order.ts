@@ -13,7 +13,7 @@ export type OrderItem = {
     quantity: number
 }
 
-enum PurchaseOrderStatus {
+export enum PurchaseOrderStatus {
     DRAFT = 1,
     SEND = 2,
     RECEIVED = 3,

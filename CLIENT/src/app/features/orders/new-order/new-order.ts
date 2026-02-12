@@ -183,16 +183,34 @@ Horváth László.`;
     );
   }
 
-  deleteDraft(){
+  deleteDraft() {
     this.orderService.deleteOrder(this.order()!.id).subscribe({
       next: () => {
         this.toastService.success("Piszkozat sikeresen törölve.")
         this.router.navigateByUrl('/orders')
         this.tab.emit('drafts');
       },
-      error: () => {
+      error: (err) => {
+        console.log(err);   
         this.toastService.error("Hiba történt a törlés során.")
       }
     })
+  }
+
+  submitOrder() {
+    const order = this.order();
+    if (order) {
+      this.orderService.submitOrder(order).subscribe({
+        next: () => {
+          this.toastService.success('Rendelés sikeresen elküldve.')
+          this.router.navigateByUrl('/orders')
+          this.tab.emit('drafts');
+        },
+        error: err => {
+          console.log(err);
+          this.toastService.error('Valami hiba történt.')
+        }
+      })
+    }
   }
 }
