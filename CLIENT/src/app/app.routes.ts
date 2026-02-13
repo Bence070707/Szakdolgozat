@@ -7,7 +7,6 @@ import { KeyDetailed } from './features/stock/key-detailed/key-detailed';
 import { Sales } from './features/sales/sales';
 import { HeelDetailed } from './features/stock/heel-detailed/heel-detailed';
 import { Orders } from './features/orders/orders';
-import { EditDraft } from './features/orders/edit-draft/edit-draft';
 import { NewOrder } from './features/orders/new-order/new-order';
 
 export const routes: Routes = [

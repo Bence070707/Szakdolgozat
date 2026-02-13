@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
 
-public class OrdersRepository(AppDbContext context) : IOrdersRepository
+public class OrdersRepository(AppDbContext context, IEmailService emailService) : IOrdersRepository
 {
     public async Task<OrderDTO> CreateDraft()
     {
@@ -76,7 +76,7 @@ public class OrdersRepository(AppDbContext context) : IOrdersRepository
         if (order is null) return false;
 
         order.PurchaseOrderStatus = PurchaseOrderStatus.SEND;
-
+        await emailService.SendEmailAsync("Kulcsrendelés", orderDTO.SupplierEmail!);
         return await context.SaveChangesAsync() > 0;
     }
 
@@ -84,9 +84,7 @@ public class OrdersRepository(AppDbContext context) : IOrdersRepository
     {
         var order = await UpdateOrderAsync(id, orderDTO);
         if (order is null) return false;
-
-        order.PurchaseOrderStatus = PurchaseOrderStatus.DRAFT;
-
+        if(order.PurchaseOrderStatus != PurchaseOrderStatus.SEND) order.PurchaseOrderStatus = PurchaseOrderStatus.DRAFT;
         return await context.SaveChangesAsync() > 0;
     }
 
@@ -98,7 +96,6 @@ public class OrdersRepository(AppDbContext context) : IOrdersRepository
             .FirstOrDefaultAsync(o => o.Id == id);
 
         if (order is null) return null;
-        if(order.PurchaseOrderStatus == PurchaseOrderStatus.SEND) return order;
         order.Note = orderDTO.Note;
         order.SupplierEmail = orderDTO.SupplierEmail;
 
@@ -130,7 +127,6 @@ public class OrdersRepository(AppDbContext context) : IOrdersRepository
             }
         }
         context.Entry(order).State = EntityState.Modified;
-        await context.SaveChangesAsync();
         return order;
     }
 }

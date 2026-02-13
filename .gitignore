@@ -482,3 +482,7 @@ $RECYCLE.BIN/
 *.swp
 API/appsettings.Development.json
 API/appsettings.json
+API/cipokulcs.db-shm
+API/cipokulcs.db-wal
+CLIENT/angular.json
+CLIENT/package-lock.json

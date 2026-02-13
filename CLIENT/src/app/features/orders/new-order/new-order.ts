@@ -5,6 +5,7 @@ import { KeyOrder } from '../../../../types/KeyOrder';
 import { Order, OrderItem } from '../../../../types/Order';
 import { ToastService } from '../../../core/services/toast-service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-new-order',
@@ -18,7 +19,8 @@ export class NewOrder implements OnInit, OnDestroy {
   protected order = signal<Order | null>(null);
   private keyService = inject(KeysService);
   protected keys = signal<KeyOrder[]>([]);
-  private route = inject(ActivatedRoute)
+  private route = inject(ActivatedRoute);
+  private location = inject(Location);
   @Output() tab = new EventEmitter<'drafts' | 'new'>();
   private router = inject(Router);
   protected isEdit = false;
@@ -103,8 +105,11 @@ Horváth László.`;
     this.orderService.draftsLoading.set(true);
     this.orderService.updateOrder(dto).subscribe({
       next: () => {
-        this.toastService.success('Sikeresen mentve!');
+        this.toastService.success('Sikeresen mentve!');    
         this.orderService.loadDrafts();
+      },
+      error: () => {
+        this.toastService.error('Valami hiba történt.')
       }
     });
   }
@@ -115,6 +120,7 @@ Horváth László.`;
 
     return {
       ...order,
+      supplierEmail: this.emailString(),
       items: this.keys().filter(x => x.quantityToOrder > 0).map(key => {
         return {
           id: key.id,
@@ -200,6 +206,7 @@ Horváth László.`;
   submitOrder() {
     const order = this.order();
     if (order) {
+      order.supplierEmail = this.emailString();
       this.orderService.submitOrder(order).subscribe({
         next: () => {
           this.toastService.success('Rendelés sikeresen elküldve.')
@@ -212,5 +219,9 @@ Horváth László.`;
         }
       })
     }
+  }
+
+  goBack(){
+    this.location.back();
   }
 }

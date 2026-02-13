@@ -18,6 +18,7 @@ builder.Services.AddScoped<IKeysRepository, KeysRepository>();
 builder.Services.AddScoped<IHeelsRepository, HeelsRepository>();
 builder.Services.AddScoped<ISalesRepository, SalesRepository>();
 builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 var app = builder.Build();
 
