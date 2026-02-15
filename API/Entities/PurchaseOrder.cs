@@ -16,6 +16,7 @@ public class PurchaseOrder
     public string? Note { get; set; }
     public string? SupplierEmail { get; set; }
     public ICollection<PurchaseOrderItem> Items { get; set; } = [];
+
 }
 
 public static class PurchaseOrderExtensions
@@ -36,9 +37,12 @@ public static class PurchaseOrderExtensions
                 PurchaseOrderStatus = purchaseOrder.PurchaseOrderStatus,
                 UpdatedAt = purchaseOrder.UpdatedAt,
                 CreatedAt = purchaseOrder.CreatedAt,
+                SentAt = purchaseOrder.SentAt,
+                ReceivedAt = purchaseOrder.ReceivedAt,
                 SupplierEmail = purchaseOrder.SupplierEmail
             };
         }
 
     }
+
 }

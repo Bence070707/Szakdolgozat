@@ -19,7 +19,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PaginatedResult<OrderDTO>>> GetOrders([FromQuery]PagingParams pagingParams)
+        public async Task<ActionResult<PaginatedResult<OrderDTO>>> GetOrders([FromQuery] PagingParams pagingParams)
         {
             var orders = await orderRepository.GetOrders(pagingParams);
             return Ok(orders);
@@ -36,7 +36,7 @@ namespace API.Controllers
         public async Task<ActionResult<OrderDTO>> GetOrderById(string id)
         {
             var order = await orderRepository.GetOrderById(id);
-            if(order is null) return NotFound("Nem található rendelés.");
+            if (order is null) return NotFound("Nem található rendelés.");
             return Ok(order.ToDTO());
         }
 
@@ -71,5 +71,20 @@ namespace API.Controllers
             return NoContent();
         }
 
+        [HttpGet("{id}/summarisedorderitem")]
+        public async Task<ActionResult<IReadOnlyList<SummarisedOrderItemDTO>>> GetSummarisedOrderItems(string id)
+        {
+            var result = await orderRepository.GetSummarisedOrderItemDTOsAsync(id);
+            if (result is null) return NotFound("Nem található rendelés.");
+            return Ok(result);
+        }
+
+        [HttpPost("{id}/receive")]
+        public async Task<ActionResult> ReceiveOrder(string id, OrderDTO orderDTO)
+        {
+            var result = await orderRepository.ReceiveOrder(id, orderDTO);
+            if (!result) return NotFound("Nem található rendelés.");
+            return NoContent();
+        }
     }
 }

@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { Order } from '../../../types/Order';
 import { PaginatedResult } from '../../../types/Pagination';
+import { SummarisedOrderItem } from '../../../types/SummarisedOrderItem';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,10 @@ export class OrderService {
     params = params.append('pageSize', pageSize);
     params = params.append('pageNumber', pageNumber);
     return this.http.get<PaginatedResult<Order>>(this.url + 'orders', { params });
+  }
+
+  getSummarisedOrderItems(id: string){
+    return this.http.get<SummarisedOrderItem[]>(this.url + 'orders/' + id + '/summarisedorderitem')
   }
 
   getDrafts(){
@@ -54,5 +59,9 @@ export class OrderService {
 
   submitOrder(order: Order){
     return this.http.post(this.url + 'orders/' + order.id + '/submit', order);
+  }
+
+  receiveOrder(order: Order){
+    return this.http.post(this.url + 'orders/' + order.id + '/receive', order);
   }
 }

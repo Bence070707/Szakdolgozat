@@ -8,6 +8,7 @@ import { Sales } from './features/sales/sales';
 import { HeelDetailed } from './features/stock/heel-detailed/heel-detailed';
 import { Orders } from './features/orders/orders';
 import { NewOrder } from './features/orders/new-order/new-order';
+import { SentConfirmation } from './features/orders/sent-confirmation/sent-confirmation';
 
 export const routes: Routes = [
     {
@@ -31,6 +32,9 @@ export const routes: Routes = [
     },
     {
         path: 'orders', component: Orders
+    },
+    {
+        path: 'orders/sentconfirmation/:id', component: SentConfirmation
     },
     {
         path: 'editdraft', component: NewOrder

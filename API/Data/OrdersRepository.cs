@@ -70,12 +70,46 @@ public class OrdersRepository(AppDbContext context, IEmailService emailService) 
         return await PaginationHelper.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
     }
 
+    public async Task<IReadOnlyList<SummarisedOrderItemDTO>> GetSummarisedOrderItemDTOsAsync(string id)
+    {
+        var order = await context.PurchaseOrders
+            .Include(o => o.Items)
+            .FirstOrDefaultAsync(o => o.Id == id);
+
+        if (order is null) return [];
+        var keys = context.Keys.ToList();
+        return [.. order.Items.Select(i =>
+                    {
+                        var key = keys.First(k => k.Id == i.KeyId);
+
+                        return new SummarisedOrderItemDTO
+                        {
+                            Id = key.Id,
+                            Name = key.SilcaCode ?? key.ErrebiCode ?? key.JmaCode,
+                            Quantity = i.Quantity
+                        };
+                    })
+                ];
+    }
+
+    public async Task<bool> ReceiveOrder(string id, OrderDTO orderDTO)
+    {
+        if(id != orderDTO.Id) return false;
+        var order = await UpdateOrderAsync(id, orderDTO);
+        if (order is null) return false;
+        await UpdateStockAsync(order);
+        order.PurchaseOrderStatus = PurchaseOrderStatus.RECEIVED;
+        order.ReceivedAt = DateTime.UtcNow;
+        return await context.SaveChangesAsync() > 0;
+    }
+
     public async Task<bool> SubmitOrder(string id, OrderDTO orderDTO)
     {
         var order = await UpdateOrderAsync(id, orderDTO);
         if (order is null) return false;
 
         order.PurchaseOrderStatus = PurchaseOrderStatus.SEND;
+        order.SentAt = DateTime.UtcNow;
         await emailService.SendEmailAsync("Kulcsrendelés", orderDTO.SupplierEmail!);
         return await context.SaveChangesAsync() > 0;
     }
@@ -84,7 +118,7 @@ public class OrdersRepository(AppDbContext context, IEmailService emailService) 
     {
         var order = await UpdateOrderAsync(id, orderDTO);
         if (order is null) return false;
-        if(order.PurchaseOrderStatus != PurchaseOrderStatus.SEND) order.PurchaseOrderStatus = PurchaseOrderStatus.DRAFT;
+        if (order.PurchaseOrderStatus != PurchaseOrderStatus.SEND) order.PurchaseOrderStatus = PurchaseOrderStatus.DRAFT;
         return await context.SaveChangesAsync() > 0;
     }
 
@@ -128,5 +162,14 @@ public class OrdersRepository(AppDbContext context, IEmailService emailService) 
         }
         context.Entry(order).State = EntityState.Modified;
         return order;
+    }
+
+    private async Task UpdateStockAsync(PurchaseOrder order)
+    {
+        foreach (var item in order.Items)
+        {
+            var key = await context.Keys.FindAsync(item.KeyId);
+            key?.Quantity += item.Quantity;
+        }
     }
 }

@@ -5,7 +5,9 @@ export type Order = {
     supplierEmail: string,
     purchaseOrderStatus: PurchaseOrderStatus,
     updatedAt: Date
-    createdAt: Date
+    createdAt: Date,
+    sentAt: Date,
+    receivedAt: Date
 }
 
 export type OrderItem = {

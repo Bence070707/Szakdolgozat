@@ -7,7 +7,7 @@
     </app-paginator>
     }
     @for (order of orders()?.items; track $index) {
-    <div class="w-full flex-1 bg-base-200 rounded-lg flex gap-2">
+    <div class="w-full flex-1 bg-base-200 rounded-lg flex gap-2 justify-between">
         <div class="p-4 flex flex-col gap-2">
             <div class="flex gap-2 items-center">
                 <h3 class="text-lg font-bold">Rendelés #{{order.id}}</h3>
@@ -18,23 +18,40 @@
                     purchaseOrderStatusPipe}}</span>
                 @if(order.purchaseOrderStatus === 1)
                 {
-                <a class="btn btn-accent btn-circle transform hover:scale-103 transition duration-200 size-7" routerLink="/editdraft" [queryParams]="{id: order.id}"><svg
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-4">
+                <a class="btn btn-accent btn-circle transform hover:scale-110 transition duration-200 size-7"
+                    routerLink="/editdraft" [queryParams]="{id: order.id}"><svg xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                     </svg>
                 </a>
                 }
             </div>
-            <p>{{order.note || 'Nincs megjegyzés'}}</p>
-            <p>Termékek száma: {{order.items.length}}</p>
-            <p>Utoljára szerkesztve: {{order.updatedAt | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+            <p class="font-semibold">{{order.note || 'Nincs megjegyzés'}}</p>
+            <p><span class="font-semibold">Termékek száma:</span> {{order.items.length}}</p>
+            @if(order.purchaseOrderStatus === 1){
+
+            <p><span class="font-semibold">Utoljára szerkesztve:</span> {{order.updatedAt | date:'yyyy-MM-dd HH:mm:ss'}}
+            </p>
+            }
+            @if(order.purchaseOrderStatus === 2){
+            <p><span class="font-semibold">Elküldve ekkor:</span> {{order.sentAt | date:'yyyy-MM-dd HH:mm:ss'}}</p>
+            }
+            @if(order.purchaseOrderStatus === 3){
+            <p><span class="font-semibold">Bevételezve ekkor:</span> {{order.receivedAt | date:'yyyy-MM-dd HH:mm:ss'}}
+            </p>
+            }
         </div>
+        @if(order.purchaseOrderStatus === 2){
+
+        <div class="h-full"><a routerLink="sentconfirmation/{{order.id}}"
+                class="btn btn-primary h-full uppercase transform hover:scale-90 transition duration-200">Beérkezett</a>
+        </div>
+        }
     </div>
     }
 </div>
 }
 @else {
-Jelenleg nincs rendelés!
+Nincsennek előzmények!
 }

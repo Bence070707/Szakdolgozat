@@ -13,4 +13,6 @@ public class OrderDTO
     public PurchaseOrderStatus PurchaseOrderStatus { get; set; }
     public DateTime UpdatedAt { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime? SentAt { get; set; }
+    public DateTime? ReceivedAt { get; set; }
 }

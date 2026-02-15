@@ -1,0 +1,34 @@
+@if(order() && order()?.items?.length! > 0){
+<div class="w-10/12 h-[85vh] p-4 mx-auto mt-4 rounded-lg bg-base-100 border-base-300 shadow-2xl self-center text-center flex flex-col gap-2">
+    <h1 class="text-center font-serif font-semibold text-2xl">Rendelés összegzése</h1> 
+    <div class="flex flex-col gap-2 mt-2 flex-1 h-10/12 overflow-y-auto border-b-2 border-b-gray-600/50 rounded-lg">
+        @for (item of orderItems(); track $index) {
+        <div class="w-full rounded-lg bg-gray-600/50 flex gap-2 justify-between">
+            <div class="bg-base-100 p-4 m-2 rounded flex-1 text-center flex flex-col">
+                <p class="font-semibold">Rendelt termék</p>
+                <p>{{item.name}}</p>
+            </div>
+            <div class="bg-base-100 p-4 m-2 rounded flex-1 text-center flex flex-col">
+                <p class="font-semibold">Rendelt mennyiség</p>
+                <p>{{item.quantity}}</p>
+            </div>
+            <div class="bg-base-100 p-4 m-2 rounded flex-1 text-center">
+                <input [(ngModel)]="item.enteredQuantity" type="number" min="0" class="input border-2"
+                    [class.border-error]="item.quantity !== item.enteredQuantity"
+                    [class.border-success]="item.quantity === item.enteredQuantity">
+            </div>
+        </div>
+        }
+    </div>
+    <button (click)="receiveOrder()"
+        class="btn btn-primary btn-lg mx-auto mt-2 transition duration-200 hover:scale-x-150 mb-2">Rendelés rögzítése a
+        készletben
+    </button>
+        <button (click)="goBack()"
+        class="btn btn-secondary btn-circle mx-auto"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+            stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+        </svg>
+    </button>
+</div>
+}
