@@ -9,6 +9,8 @@ import { HeelDetailed } from './features/stock/heel-detailed/heel-detailed';
 import { Orders } from './features/orders/orders';
 import { NewOrder } from './features/orders/new-order/new-order';
 import { SentConfirmation } from './features/orders/sent-confirmation/sent-confirmation';
+import { Reports } from './features/reports/reports';
+import { DetailedReport } from './features/reports/detailed-report/detailed-report';
 
 export const routes: Routes = [
     {
@@ -38,6 +40,14 @@ export const routes: Routes = [
     },
     {
         path: 'editdraft', component: NewOrder
+    },
+    {
+        path: 'reports',
+        component: Reports,
+        children: [
+            { path: '', redirectTo: 'daily', pathMatch: 'full' },
+            { path: ':reportType', component: DetailedReport }
+        ]
     },
     {
         path: '**',
