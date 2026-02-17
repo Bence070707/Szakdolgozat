@@ -7,4 +7,5 @@ namespace API.Interfaces;
 public interface IReportsRepository
 {
     Task<ReportDTO> GetReport(ReportType reportType, DateTime? from);
+    Task<ReportDTO> GetReportFromTo(ReportType reportType, DateTime? from, DateTime? to);
 }

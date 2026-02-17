@@ -20,6 +20,32 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
         };
     }
 
+    public async Task<ReportDTO> GetReportFromTo(ReportType reportType, DateTime? from, DateTime? to)
+    {
+        var referenceFrom = from?.Date ?? DateTime.UtcNow;
+        var referenceTo = to?.Date ?? DateTime.UtcNow;
+
+        var query = context.Sales
+            .Where(x => x.SoldAt >= referenceFrom && x.SoldAt < referenceTo);
+
+        var totalRevenue = await query
+            .SumAsync(x => (int?)x.TotalAmount) ?? 0;
+
+        var totalSales = await query
+            .CountAsync();
+
+        var totalItemsSold = await query
+            .SelectMany(x => x.Items)
+            .SumAsync(x => (int?)x.Quantity) ?? 0;
+
+        return new ReportDTO
+        {
+            TotalRevenue = totalRevenue,
+            TotalSales = totalSales,
+            TotalItemsSold = totalItemsSold
+        };
+    }
+
     private async Task<ReportDTO> GetYearlyReport(DateTime? from)
     {
         var reference = from ?? DateTime.UtcNow;
@@ -135,4 +161,5 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
         int diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
         return date.Date.AddDays(-diff);
     }
+
 }

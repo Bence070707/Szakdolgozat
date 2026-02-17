@@ -18,9 +18,15 @@
             [class.bg-base-300]="reportsService.reportType() !== 'yearly'"
             [class.bg-base-100]="reportsService.reportType() === 'yearly'"
             [class.border-2]="reportsService.reportType() === 'yearly'"><a routerLink="yearly" class="h-full font-semibold flex items-center justify-center text-center">Éves<br>kimutatások</a></li>
+            <li class="w-full flex-1 rounded-b-lg" 
+            [class.bg-base-300]="reportsService.reportType() !== 'fromto'"
+            [class.bg-base-100]="reportsService.reportType() === 'fromto'"
+            [class.border-2]="reportsService.reportType() === 'fromto'"><a routerLink="fromto" class="h-full font-semibold flex items-center justify-center text-center">Egyedi<br>kimutatások</a></li>
         </ul>
     </div>
     <div class="bg-base-100 w-2/3 h-[85vh] rounded-lg shadow-lg border-2 border-base-300 flex flex-col p-4">
-        <router-outlet></router-outlet>
+        <div class="w-full h-full">
+            <router-outlet></router-outlet>
+        </div>
     </div>
 </div>

@@ -21,5 +21,17 @@ namespace API.Controllers
             var report = await reportsRepository.GetReport(reportType, from);
             return Ok(report);
         }
+
+        [HttpGet("fromto")]
+        public async Task<ActionResult<ReportDTO>> GetReportFromTo([FromQuery]string type, [FromQuery]DateTime? from, [FromQuery]DateTime? to)
+        {
+            if (!Enum.TryParse<ReportType>(type, true, out var reportType))
+            {
+                return BadRequest("Nem megfelelő riport típus");
+            }
+
+            var report = await reportsRepository.GetReportFromTo(reportType, from, to);
+            return Ok(report);
+        }
     }
 }

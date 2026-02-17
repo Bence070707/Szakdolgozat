@@ -13,19 +13,37 @@ export class ReportsService {
   report = signal<Report | null>(null);
   reportType = signal<ReportType>('daily');
 
-  loadReport(type: ReportType, from: Date){
+  loadReport(type: ReportType, from: Date) {
     let params = new HttpParams();
 
     params = params.append('type', type);
     params = params.append('from', from.toISOString());
 
-    return this.http.get<Report>(this.url + 'reports', { params }).subscribe({
+    this.http.get<Report>(this.url + 'reports', { params }).subscribe({
       next: response => {
-        this.report.set(response);      
-      }, 
+        this.report.set(response);
+      },
       error: err => {
         console.log(err);
-        
+
+      }
+    });
+  }
+
+  loadReportFromTo(type: ReportType, from: Date, to: Date) {
+    let params = new HttpParams();
+
+    params = params.append('type', type);
+    params = params.append('from', from.toISOString());
+    params = params.append('to', to.toISOString());
+
+    this.http.get<Report>(this.url + 'reports/fromto', { params }).subscribe({
+      next: response => {
+        this.report.set(response);
+      },
+      error: err => {
+        console.log(err);
+
       }
     });
   }
