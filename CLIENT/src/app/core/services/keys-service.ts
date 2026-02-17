@@ -11,11 +11,12 @@ export class KeysService {
   private http = inject(HttpClient);
   private url = environment.apiUrl;
 
-  getKeys(pageNumber = 1, pageSize = 5) {
+  getKeys(pageNumber = 1, pageSize = 5, search = '') {
     let params = new HttpParams();
 
     params = params.append('pageNumber', pageNumber);
     params = params.append('pageSize', pageSize);
+    params = params.append('search', search);
     return this.http.get<PaginatedResult<Key>>(this.url + 'keys', { params });
   }
 

@@ -11,7 +11,9 @@ export class Paginator {
   pageSize = model(10);
   totalCount = input(0);
   totalPages = input(0);
+  showSearchInput = input<boolean>(true);
   pageSizeOptions = input([5, 10, 20, 50]);
+  searchChange = output<string>();
 
   pageChange = output<{ pageNumber: number, pageSize: number }>();
   lastItemIndex = computed(() => {
@@ -30,5 +32,11 @@ export class Paginator {
       pageNumber: this.pageNumber(),
       pageSize: this.pageSize()
     })
+  }
+
+  searchInput(event: Event){
+    const input = event.target as HTMLInputElement;
+    const value = input.value.trim();
+    this.searchChange.emit(value);
   }
 }

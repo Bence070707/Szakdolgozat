@@ -20,7 +20,13 @@ public class HeelsRepository(AppDbContext context) : IHeelsRepository
 
     public async Task<PaginatedResult<Heel>> GetHeels(PagingParams pagingParams)
     {
-        return await PaginationHelper.CreateAsync(context.Heels, pagingParams.PageNumber, pagingParams.PageSize);
+        var query = context.Heels.AsQueryable();
+
+        if (!string.IsNullOrEmpty(pagingParams.Search))
+        {
+            query = query.Where(x => x.Code.ToLower().Contains(pagingParams.Search.ToLower()));
+        }
+        return await PaginationHelper.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
     }
 
     public async Task UpdateHeel(Heel heel)

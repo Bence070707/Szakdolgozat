@@ -1,25 +1,24 @@
 <div class="flex items-center w-full gap-3 py-3">
-    <span>Termékek oldalként:</span>
-    <select class="select w-24" (change)="onPageChange(undefined, $event.target)">
-        @for (size of pageSizeOptions(); track $index) {
+        <span>Termékek oldalként:</span>
+        <select class="select select-primary w-24" (change)="onPageChange(undefined, $event.target)">
+            @for (size of pageSizeOptions(); track $index) {
             <option [value]="size" [selected]="size === pageSize()">{{size}}</option>
+            }
+        </select>
+
+        <p class="text-sm w-fit">{{(pageNumber() - 1) * pageSize() + 1}} - {{lastItemIndex()}} a(z) {{totalCount()}} termékből</p>
+
+        <div class="flex items-center gap-2">
+            <button class="btn btn-circle btn-ghost" [disabled]="pageNumber() === 1"
+                (click)="onPageChange(pageNumber() - 1)">
+                &larr;
+            </button>
+            <button class="btn btn-circle btn-ghost" [disabled]="pageNumber() >= totalPages()"
+                (click)="onPageChange(pageNumber() + 1)">
+                &rarr;
+            </button>
+        </div>
+        @if(showSearchInput()){
+            <input type="text" class="input input-primary" placeholder="Keresés..." (input)="searchInput($event)">
         }
-    </select>
-    <div class="text-sm">
-        {{(pageNumber() - 1) * pageSize() + 1}} - {{lastItemIndex()}} of {{totalCount()}}
-    </div>
-
-    <div class="flex items-center gap-2">
-        <button 
-        class="btn btn-circle btn-ghost"
-        [disabled]="pageNumber() === 1" (click)="onPageChange(pageNumber() - 1)">
-        &larr;
-        </button>
-
-        <button 
-        class="btn btn-circle btn-ghost"
-        [disabled]="pageNumber() >= totalPages()" (click)="onPageChange(pageNumber() + 1)">
-        &rarr;
-        </button>
-    </div>
 </div>

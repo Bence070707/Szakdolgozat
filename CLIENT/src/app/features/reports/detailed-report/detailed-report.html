@@ -1,13 +1,14 @@
 <div class="flex flex-col gap-2 h-full items-center">
-    <h1 class="text-2xl font-serif">{{type() | reportType}} Kimutatás</h1>
+    <h1 class="text-2xl font-serif bg-base-100 border border-primary shadow w-full text-center rounded-lg text-base-content p-2">{{type() |
+        reportType}} Kimutatás</h1>
     <div class="h-1/3 w-full text-center">
         @if(type() !== 'fromto'){
 
-        
-        <p class="text-xl font-semibold mb-2">Kezdődátum: </p>
+
+        <p class="badge badge-outline badge-primary mb-2">Kezdődátum: </p>
         <div class="flex gap-2 justify-center">
-            <input type="date" class="input" [value]="value().toISOString().substring(0,10)"
-                (change)="valueChange($event)" />
+            <input type="date" class="input input-primary" [value]="value().toISOString().substring(0,10)"
+                (change)="valueChange($event)" [max]="today"/>
             @if(type() !== 'fromto'){
 
             <button (click)="previousPeriod()" class="btn btn-circle"><svg xmlns="http://www.w3.org/2000/svg"
@@ -22,21 +23,29 @@
             </button>
             }
         </div>
-    }
-    @else {
+        }
+        @else {
         <div class="flex justify-around w-full">
-            <div class="w-1/2">
-                <p class="text-xl font-semibold mb-2">Kezdődátum: </p>
-                <input type="date" class="input" [value]="value().toISOString().substring(0,10)"
-                        (change)="valueChange($event)" />
+            <div class="w-1/2 flex flex-col items-center">
+                <p class="badge badge-outline badge-primary mb-2">Kezdődátum: </p>
+                <input type="date" class="input input-primary" [value]="value().toISOString().substring(0,10)"
+                    (change)="valueChange($event)" [max]="today"/>
             </div>
-            <div class="w-1/2">
-                <p class="text-xl font-semibold mb-2">Záródátum: </p>
-                <input type="date" class="input" [value]="to().toISOString().substring(0,10)"
-                        (change)="toChange($event)" />
+            <div class="w-1/2 flex flex-col align-middle">
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-6 w-full">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+                </svg>
+            </div>
+            <div class="w-1/2 flex flex-col items-center">
+                <p class="badge badge-outline badge-secondary mb-2">Záródátum: </p>
+                <input type="date" class="input input-secondary" [value]="to().toISOString().substring(0,10)"
+                    (change)="toChange($event)" [min]="value() | date:'yyyy-MM-dd'" [max]="today"/>
             </div>
         </div>
-    }
+        }
     </div>
     @if(reportsService.report(); as report){
     @if(reportsService.report()?.totalRevenue! > 0){

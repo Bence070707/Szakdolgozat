@@ -20,7 +20,15 @@ public class KeysRepository(AppDbContext context) : IKeysRepository
 
     public async Task<PaginatedResult<Key>> GetKeysAsync(PagingParams pagingParams)
     {
-        return await PaginationHelper.CreateAsync(context.Keys, pagingParams.PageNumber, pagingParams.PageSize);
+        var query = context.Keys.AsQueryable();
+        if (!string.IsNullOrEmpty(pagingParams.Search) && !string.IsNullOrWhiteSpace(pagingParams.Search))
+        {
+            query = query.Where(
+                x => x.SilcaCode.ToLower().Contains(pagingParams.Search.ToLower())
+                || x.ErrebiCode.ToLower().Contains(pagingParams.Search.ToLower())
+                || x.JmaCode.ToLower().Contains(pagingParams.Search.ToLower()));
+        }
+        return await PaginationHelper.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
     }
 
     public async Task UpdateKey(Key key)

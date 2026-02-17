@@ -8,11 +8,12 @@
         [pageSize]="metadata.pageSize"
         (pageChange)="onPageChangeKeys($event)"
         [totalPages]="metadata.totalPages"
+        (searchChange)="onSearchKeyChange($event)"
         >
         </app-paginator>
         @if(busyService.busyRequestCount() > 0)
         {
-            <span class="loading loading-spinner loading-xl text-error"></span>
+            <span class="loading loading-spinner loading-xl text-primary"></span>
         }
     </div>
 }
@@ -67,18 +68,19 @@
 @if (heels() && heels()?.items?.length! > 0) {
 <p class="text-center font-serif text-2xl font-semibold">Sarkak</p>
 @if(heels()?.metadata; as metadata){
-    <div class="flex gap-2">
+    <div class="flex gap-2 w-full">
         <app-paginator
         [pageNumber]="metadata.currentPage"
         [totalCount]="metadata.totalCount"
         [pageSize]="metadata.pageSize"
         (pageChange)="onPageChangeHeels($event)"
         [totalPages]="metadata.totalPages"
+        (searchChange)="onSearchHeelChange($event)"
         >
         </app-paginator>
         @if(busyService.busyRequestCount() > 0)
         {
-            <span class="loading loading-spinner loading-xl text-error"></span>
+            <span class="loading loading-spinner loading-xl text-primary"></span>
         }
     </div>
 }

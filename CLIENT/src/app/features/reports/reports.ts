@@ -1,12 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
 import { ReportsService } from '../../core/services/reports-service';
 
 
 
 @Component({
   selector: 'app-reports',
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './reports.html',
   styleUrl: './reports.css',
 })

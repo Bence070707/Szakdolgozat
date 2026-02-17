@@ -17,6 +17,7 @@ export class DetailedReport implements OnInit {
   protected reportsService = inject(ReportsService);
   private route = inject(ActivatedRoute)
   type = signal<ReportType>('daily');
+  today = new Date().toISOString().split('T')[0];
 
   constructor() {
     effect(() => {

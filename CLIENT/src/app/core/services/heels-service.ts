@@ -11,11 +11,12 @@ export class HeelsService {
   private http = inject(HttpClient);
   private url = environment.apiUrl;
 
-  getHeels(pageNumber = 1, pageSize = 5) {
+  getHeels(pageNumber = 1, pageSize = 5, search = '') {
     let params = new HttpParams();
 
     params = params.append('pageNumber', pageNumber);
     params = params.append('pageSize', pageSize);
+    params = params.append('search', search);
     return this.http.get<PaginatedResult<Heel>>(this.url + 'heels', { params });
   }
 

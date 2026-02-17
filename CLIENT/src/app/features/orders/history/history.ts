@@ -45,4 +45,13 @@ export class History implements OnInit {
     this.pageSize = event.pageSize;
     this.initOrder();
   }
+
+  deleteOrder(id: string){
+    this.orderService.deleteOrder(id).subscribe({
+      next: () => {
+        this.toastService.success('Sikeres törlés!');
+        this.initOrder();
+      }
+    });
+  }
 }

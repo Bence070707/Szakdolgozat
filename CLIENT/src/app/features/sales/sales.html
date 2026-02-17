@@ -1,8 +1,9 @@
 <div class="flex m-4 gap-2 h-[90vh]">
     <div
         class="flex flex-wrap gap-2 w-2/3 justify-evenly bg-base-100 border-2 border-primary shadow-lg rounded-lg overflow-y-auto py-4">
-        @if(items().length > 0){
-        @for (item of items(); track $index) {
+        <input type="text" class="input w-full m-4 mt-0 border-accent" placeholder="Keresés..." (input)="searchTerm.set($any($event.target).value)">
+        @if(filteredItems().length > 0){
+        @for (item of filteredItems(); track $index) {
         @if (isKey(item)) {
         <div class="w-1/5">
             <app-key-item (add)="addToSales($event)" [item]="item"></app-key-item>

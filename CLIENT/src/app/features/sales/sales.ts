@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { Heel } from '../../../types/Heel';
 import { KeysService } from '../../core/services/keys-service';
 import { HeelsService } from '../../core/services/heels-service';
@@ -25,6 +25,24 @@ export class Sales implements OnInit {
   private toastService = inject(ToastService);
   protected sales = signal<SellableItemUI[]>([]);
   protected items = signal<SellableItemUI[]>([]);
+  protected searchTerm = signal<string>('');
+  filteredItems = computed(() => {
+    const value = this.searchTerm().trim().toLowerCase();
+
+    if (!value) return this.items();
+
+    return this.items().filter(item => {
+      if (this.isKey(item)) {
+        return item.silcaCode.toLowerCase().includes(value) ||
+          item.errebiCode?.toLowerCase().includes(value) ||
+          item.jmaCode?.toLowerCase().includes(value);
+      } 
+      if(this.isHeel(item)){
+        return item.code.toLowerCase().includes(value);
+      }
+      return item;
+    });
+  });
 
   ngOnInit(): void {
     this.initHeels();
@@ -74,8 +92,8 @@ export class Sales implements OnInit {
     this.heelsService.getAllHeels().subscribe({
       next: response => {
         const mapped = response
-        .filter(x => x.quantity > 0)
-        .map(heel => new HeelToSellUI(heel));
+          .filter(x => x.quantity > 0)
+          .map(heel => new HeelToSellUI(heel));
 
         this.items.update(items => {
           return [

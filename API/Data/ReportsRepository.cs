@@ -22,8 +22,8 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
 
     public async Task<ReportDTO> GetReportFromTo(ReportType reportType, DateTime? from, DateTime? to)
     {
-        var referenceFrom = from?.Date ?? DateTime.UtcNow;
-        var referenceTo = to?.Date ?? DateTime.UtcNow;
+        var referenceFrom = (from ?? DateTime.UtcNow).Date;
+        var referenceTo = (to ?? DateTime.UtcNow).Date.AddDays(1);
 
         var query = context.Sales
             .Where(x => x.SoldAt >= referenceFrom && x.SoldAt < referenceTo);

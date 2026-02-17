@@ -22,6 +22,8 @@ export class Current {
   protected heels = signal<PaginatedResult<Heel> | null>(null);
   pageNumber = 1;
   pageSize = 5;
+  searchKey = '';
+  searchHeel = '';
 
   ngOnInit(): void {
     this.getKeys();
@@ -29,7 +31,7 @@ export class Current {
   }
 
   private getKeys() {
-    this.keysService.getKeys(this.pageNumber, this.pageSize).subscribe({
+    this.keysService.getKeys(this.pageNumber, this.pageSize, this.searchKey).subscribe({
       next: response => {
         this.keys.set(response);
       },
@@ -40,7 +42,7 @@ export class Current {
   }
 
   private getHeels() {
-    this.heelsService.getHeels(this.pageNumber, this.pageSize).subscribe({
+    this.heelsService.getHeels(this.pageNumber, this.pageSize, this.searchHeel).subscribe({
       next: response => {
         this.heels.set(response);
       },
@@ -62,4 +64,13 @@ export class Current {
     this.getHeels();
   }
 
+  onSearchKeyChange(event: string){
+    this.searchKey = event;
+    this.getKeys();
+  }
+
+  onSearchHeelChange(event: string){
+    this.searchHeel = event;
+    this.getHeels();
+  }
 }
