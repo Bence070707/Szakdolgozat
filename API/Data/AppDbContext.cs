@@ -1,11 +1,13 @@
 using System;
 using API.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 
 namespace API.Data;
 
-public class AppDbContext(DbContextOptions options) : DbContext(options)
+public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>(options)
 {
     public DbSet<Key> Keys { get; set; }
     public DbSet<Heel> Heels { get; set; }
@@ -43,6 +45,24 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
         .WithOne(o=>o.PurchaseOrder)
         .HasForeignKey(o => o.PurchaseOrderId)
         .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<IdentityRole>()
+        .HasData(
+            new IdentityRole
+            {
+                Id = "manager-id",
+                Name = "Manager",
+                NormalizedName = "MANAGER",
+                ConcurrencyStamp = "manager-stamp"
+            },
+            new IdentityRole
+            {
+                Id = "admin-id",
+                Name = "Admin",
+                NormalizedName = "ADMIN",
+                ConcurrencyStamp = "admin-stamp"
+            }
+        );
     }
 
     public override Task<int> SaveChangesAsync(
