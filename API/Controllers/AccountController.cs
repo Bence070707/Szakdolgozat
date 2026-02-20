@@ -24,8 +24,17 @@ namespace API.Controllers
             };
 
             var result = await userManager.CreateAsync(user, registerDto.Password);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("identity", error.Description);
+                }
 
-            if (!result.Succeeded) return BadRequest(result.Errors);
+                return ValidationProblem();
+            }
+            
+            await userManager.AddToRoleAsync(user, "Manager");
 
             await SetRefreshTokenCookie(user);
 

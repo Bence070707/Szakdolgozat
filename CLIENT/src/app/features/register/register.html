@@ -1,0 +1,17 @@
+<form #registerForm="ngForm" (ngSubmit)="register()">
+    <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+        <legend class="fieldset-legend">Regisztráció</legend>
+
+        <label class="label">Felhasználónév</label>
+        <input [(ngModel)]="creds.displayName" type="text" class="input" placeholder="Felhasználónév" name="username"/>
+
+        <label class="label">Email</label>
+        <input [(ngModel)]="creds.email" type="email" class="input" placeholder="Email" name="email"/>
+
+        <label class="label">Jelszó</label>
+        <input [(ngModel)]="creds.password" type="password" class="input" placeholder="Password" name="password"/>
+
+        <button class="btn btn-neutral mt-4" type="submit">Regisztráció</button>
+        <button (click)="toggleReg()" class="btn mt-4" type="button">Mégsem</button>
+    </fieldset>
+</form>

@@ -4,11 +4,44 @@
 
     <span class="loading loading-spinner loading-xl text-primary"></span>
     }
-    <div>
-        <a routerLinkActive="bg-primary text-white scale-103" [routerLinkActiveOptions]="{exact: true}" routerLink="/" class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Főoldal</a>
-        <a routerLinkActive="bg-primary text-white scale-103" routerLink="/stocks" class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Készlet</a>
-        <a routerLinkActive="bg-primary text-white scale-103" routerLink="/sales" class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Eladás</a>
-        <a routerLinkActive="bg-primary text-white scale-103" routerLink="/orders" class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Bevételezés</a>
-        <a routerLinkActive="bg-primary text-white scale-103" routerLink="/reports" class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Kimutatások</a>
+    <div class="flex gap-2">
+        <a routerLinkActive="bg-primary text-white scale-103" [routerLinkActiveOptions]="{exact: true}" routerLink="/"
+        class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Főoldal</a>
+        @if (accountService.currentUser(); as user) {
+        <a routerLinkActive="bg-primary text-white scale-103" routerLink="/stocks"
+            class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Készlet</a>
+        <a routerLinkActive="bg-primary text-white scale-103" routerLink="/sales"
+            class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Eladás</a>
+        <a routerLinkActive="bg-primary text-white scale-103" routerLink="/orders"
+            class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Bevételezés</a>
+        <a routerLinkActive="bg-primary text-white scale-103" routerLink="/reports"
+            class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Kimutatások</a>
+        <div class="dropdown dropdown-end hover:cursor-pointer">
+            <div tabindex="0" role="button" class="avatar avatar-placeholder">
+                <div class="bg-neutral text-neutral-content w-11 rounded-full">
+                    <span class="text-xs">{{user.displayName}}</span>
+                </div>
+            </div>
+            <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                <li><button class="btn btn-primary" (click)="logout()">Kijelentkezés</button></li>
+            </ul>
+        </div>
+        }
+        @else{
+
+        <form class="flex gap-2" #loginForm="ngForm" (ngSubmit)="login()">
+            <label class="floating-label">
+                <span>Email</span>
+                <input [(ngModel)]="creds.email" type="text" placeholder="példa@példa.com" class="input input-md"
+                    name="email" />
+            </label>
+            <label class="floating-label">
+                <span>Jelszó</span>
+                <input [(ngModel)]="creds.password" type="password" placeholder="********" class="input input-md"
+                    name="password" />
+            </label>
+            <button type="submit" class="btn btn-md btn-primary">Bejelentkezés</button>
+        </form>
+        }
     </div>
 </div>
