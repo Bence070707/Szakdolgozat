@@ -1,0 +1,45 @@
+<div class="h-[75vh] overflow-auto rounded-box border border-base-content/5 bg-base-100 mx-2">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Szerepkörök</th>
+                <th>Műveletek</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (user of users(); track user.id) {
+                <tr>
+                    <td>{{user.email}}</td>
+                    <td>{{user.roles.join(', ')}}</td>
+                    <td><button (click)="openRolesModal(user)" class="btn btn-primary">Szerepkörök szerkesztése</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<dialog #rolesModal class="modal">
+    <div class="modal-box">
+        <h3 class="text-lg"> Szerepkörök szerkesztése <span class="font-bold">{{selectedUser?.email}}</span> részére</h3>
+        <fieldset class="fieldset w-full p-4 bg-base-100 border border-base-300 rounded-box">
+            <legend class="fieldset-legend">Szerepkör kiválasztása</legend>
+            @for (role of roles; track $index) {
+                <label class="fieldset-label">
+                    <input type="checkbox"
+                    (change)="toggleRole($event, role)"
+                    [checked]="selectedUser?.roles?.includes(role)"
+                    class="checkbox"
+                    >
+                    {{role}}
+                </label>
+            }
+        </fieldset>
+        <div class="modal-action">
+            <button (click)="updateRoles()" class="btn btn-primary">Mentés</button>
+        </div>
+    </div>
+    <form method="dialog" class="modal-backdrop">
+        <button>Bezárás</button>
+    </form>
+</dialog>

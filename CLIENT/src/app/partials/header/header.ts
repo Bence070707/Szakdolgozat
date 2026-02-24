@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterLinkActive } from "@angular/router";
+import { Router, RouterLink, RouterLinkActive } from "@angular/router";
 import { BusyService } from '../../core/services/busy-service';
 import { FormsModule, NgForm } from '@angular/forms';
 import { AccountService } from '../../core/services/account-service';
 import { ToastService } from '../../core/services/toast-service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-header',
@@ -15,6 +16,7 @@ export class Header {
   protected busyService = inject(BusyService);
   protected accountService = inject(AccountService);
   private toastService = inject(ToastService);
+  private router = inject(Router);
   protected creds: any = {};
 
   login(){
@@ -32,5 +34,6 @@ export class Header {
 
   logout(){
     this.accountService.logout();
+    this.router.navigateByUrl('/');
   }
 }

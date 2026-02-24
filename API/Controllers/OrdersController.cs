@@ -2,11 +2,13 @@ using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize(Roles = "Admin,Manager")]
     [Route("[controller]")]
     [ApiController]
     public class OrdersController(IOrdersRepository orderRepository) : ControllerBase

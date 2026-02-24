@@ -13,32 +13,58 @@ export class AccountService {
   currentUser = signal<User | null>(null);
 
   register(creds: RegisterCreds) {
-    return this.http.post<User>(this.url + 'account/register', creds).pipe(
+    return this.http.post<User>(this.url + 'account/register', creds, { withCredentials: true }).pipe(
       tap(user => {
         if (user) {
           this.setCurrentUser(user);
+          this.automatedRefreshTokenRequest();
         }
       })
     );
   }
 
   login(creds: LoginCreds) {
-    return this.http.post<User>(this.url + 'account/login', creds).pipe(
+    return this.http.post<User>(this.url + 'account/login', creds, { withCredentials: true }).pipe(
       tap(user => {
         if (user) {
           this.setCurrentUser(user);
+          this.automatedRefreshTokenRequest();
         }
       })
     )
   }
 
+  refreshToken() {
+    return this.http.post<User>(this.url + 'account/refresh-token', {}, { withCredentials: true })
+  }
+
+  automatedRefreshTokenRequest() {
+    setInterval(() => {
+      this.http.post<User>(this.url + 'account/refresh-token', {}, { withCredentials: true }).subscribe({
+        next: user => {
+          this.setCurrentUser(user);
+        },
+        error: () => {
+          this.logout();
+        }
+      })
+    }, 1000 * 60 * 5);
+  }
+
   logout() {
-    localStorage.removeItem('user');
     this.currentUser.set(null);
   }
 
   setCurrentUser(user: User) {
-    localStorage.setItem('user', JSON.stringify(user));
+    this.setRolesForStorage(user);
     this.currentUser.set(user)
+  }
+
+  private setRolesForStorage(user: User) {
+    const payload = user.token.split('.')[1];
+    const decoded = atob(payload);
+    const playloadJson = JSON.parse(decoded);
+    const roles = playloadJson.role;
+    user.roles = Array.isArray(roles) ? roles : [roles];
   }
 }

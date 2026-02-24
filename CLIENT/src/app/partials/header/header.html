@@ -6,7 +6,7 @@
     }
     <div class="flex gap-2">
         <a routerLinkActive="bg-primary text-white scale-103" [routerLinkActiveOptions]="{exact: true}" routerLink="/"
-        class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Főoldal</a>
+            class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Főoldal</a>
         @if (accountService.currentUser(); as user) {
         <a routerLinkActive="bg-primary text-white scale-103" routerLink="/stocks"
             class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Készlet</a>
@@ -14,8 +14,14 @@
             class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Eladás</a>
         <a routerLinkActive="bg-primary text-white scale-103" routerLink="/orders"
             class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Bevételezés</a>
+            @if(accountService.currentUser()?.roles?.includes('Admin')){
         <a routerLinkActive="bg-primary text-white scale-103" routerLink="/reports"
             class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Kimutatások</a>
+
+        <a routerLinkActive="bg-primary text-white scale-103" routerLink="/accounts"
+            class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Felhasználók</a>
+        }
+
         <div class="dropdown dropdown-end hover:cursor-pointer">
             <div tabindex="0" role="button" class="avatar avatar-placeholder">
                 <div class="bg-neutral text-neutral-content w-11 rounded-full">

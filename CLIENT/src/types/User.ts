@@ -3,7 +3,8 @@ export type User = {
     displayName: string,
     userName: string,
     email: string,
-    token: string
+    token: string,
+    roles: string[]
 }
 
 

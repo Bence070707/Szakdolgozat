@@ -1,9 +1,11 @@
 using API.DTOs;
 using API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize(Roles = "Admin,Manager")]
     [Route("[controller]")]
     [ApiController]
     public class SalesController(ISalesRepository salesRepository) : ControllerBase

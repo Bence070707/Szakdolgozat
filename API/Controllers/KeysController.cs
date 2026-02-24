@@ -2,12 +2,14 @@ using API.Data;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
+    [Authorize(Roles = "Admin,Manager")]
     [Route("[controller]")]
     [ApiController]
     public class KeysController(IKeysRepository keysRepository) : ControllerBase

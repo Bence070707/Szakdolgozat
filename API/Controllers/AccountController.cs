@@ -36,7 +36,7 @@ namespace API.Controllers
             
             await userManager.AddToRoleAsync(user, "Manager");
 
-            await SetRefreshTokenCookie(user);
+            await GenerateRefreshToken(user);
 
             return Ok(await user.ToDto(tokenService));
         }
@@ -51,6 +51,8 @@ namespace API.Controllers
             var result = await userManager.CheckPasswordAsync(user, loginDto.Password);
 
             if (!result) return Unauthorized();
+
+            await GenerateRefreshToken(user);
 
             return Ok(await user.ToDto(tokenService));
         }
@@ -67,12 +69,12 @@ namespace API.Controllers
 
             if (user == null) return Unauthorized();
 
-            await SetRefreshTokenCookie(user);
+            await GenerateRefreshToken(user);
 
             return await user.ToDto(tokenService);
         }
 
-        private async Task SetRefreshTokenCookie(AppUser user)
+        private async Task GenerateRefreshToken(AppUser user)
         {
             var refreshToken = tokenService.GenerateRefreshToken();
             user.RefreshToken = refreshToken;

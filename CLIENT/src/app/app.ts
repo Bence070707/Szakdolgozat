@@ -4,6 +4,7 @@ import { RouterOutlet } from "@angular/router";
 import { Footer } from "./partials/footer/footer";
 import { AccountService } from './core/services/account-service';
 import { User } from '../types/User';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -11,19 +12,6 @@ import { User } from '../types/User';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App implements OnInit{
+export class App{
   protected readonly title = signal('CLIENT');
-  private accountService = inject(AccountService);
-  
-  ngOnInit(): void {
-    this.setCurrentUser();
-  }
-
-  setCurrentUser(){
-    const user = localStorage.getItem('user');
-    if(user){
-      var userJson = JSON.parse(user);
-      this.accountService.currentUser.set(userJson);
-    }
-  }
 }
