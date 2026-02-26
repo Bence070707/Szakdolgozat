@@ -2,11 +2,12 @@ using System;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
 
-public class KeysRepository(AppDbContext context) : IKeysRepository
+public class KeysRepository(AppDbContext context, UserManager<AppUser> userManager) : IKeysRepository
 {
     public async Task<Key?> FindKeyByIdAsync(string id)
     {
@@ -31,9 +32,38 @@ public class KeysRepository(AppDbContext context) : IKeysRepository
         return await PaginationHelper.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
     }
 
-    public async Task UpdateKey(Key key)
+    public async Task<bool> UpdateKey(string id, Key updatedKey, bool isAdmin, string userId)
     {
-        context.Keys.Update(key);
-        await context.SaveChangesAsync();
+        var product = await context.Keys.FindAsync(id);
+        if(product is null) return false;
+
+        if(id != updatedKey.Id) return false;
+
+        var user = await userManager.FindByIdAsync(userId);
+        if(user is null) return false;
+
+        var movement = new StockMovement
+        {
+            ProductId = product.Id,
+            QuantityBefore = product.Quantity,
+            QuantityAfter = updatedKey.Quantity,
+            PriceBefore = product.Price,
+            PriceAfter = updatedKey.Price,
+            CreatedBy = userId,
+            User = user
+        };
+
+
+        if (isAdmin)
+        {
+            product.Quantity = updatedKey.Quantity;
+            product.Price = updatedKey.Price;
+
+            movement.Status = StockMovementStatus.ACCEPTED;
+            movement.DecidedAt = DateTime.UtcNow;
+        }
+
+        context.StockMovements.Add(movement);
+        return await context.SaveChangesAsync() > 0;
     }
 }

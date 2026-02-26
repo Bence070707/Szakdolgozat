@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { OrderService } from '../../../core/services/order-service';
 import { PaginatedResult } from '../../../../types/Pagination';
 import { Order } from '../../../../types/Order';
@@ -16,6 +16,8 @@ import { SummarisedOrderItem } from '../../../../types/SummarisedOrderItem';
   styleUrl: './history.css',
 })
 export class History implements OnInit {
+  @ViewChild('rolesModal') rolesModal!: ElementRef<HTMLDialogElement>;
+  protected selectedOrder: Order | null = null;
   private orderService = inject(OrderService);
   private toastService = inject(ToastService);
   protected orders = signal<PaginatedResult<Order> | null>(null); 
@@ -53,5 +55,10 @@ export class History implements OnInit {
         this.initOrder();
       }
     });
+  }
+
+  openModal(order: Order){
+    this.selectedOrder = order;
+    this.rolesModal.nativeElement.showModal();
   }
 }

@@ -22,9 +22,11 @@ export const appConfig: ApplicationConfig = {
             await lastValueFrom(initService.init());
           }
           finally {
+            const splash = document.getElementById('splash')
+            if(splash) splash.remove();
             resolve();
           }
-        }, 500);
+        }, 0);
       })
     })
   ]

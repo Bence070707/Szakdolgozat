@@ -10,6 +10,8 @@ public class AppUser : IdentityUser
     public required string DisplayName { get; set; }
     public string? RefreshToken { get; set; }
     public DateTime? RefreshTokenExpiry { get; set; }
+    public bool IsArchived { get; set; }
+    public DateTime? ArchivedAt { get; set; }
 }
 
 public static class AppUserExtensions

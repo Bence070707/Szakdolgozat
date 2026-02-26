@@ -14,7 +14,7 @@ export class Accounts {
 protected accountSerivce = inject(AccountService);
 activeTab = 'roles';
 tabs = [
-  {label: 'Szerepkörök kezelése', value: 'roles'},
+  {label: 'Fiókok kezelése', value: 'roles'},
   {label: 'Regisztrációk kezelése', value: 'registrations'}
 ]
 

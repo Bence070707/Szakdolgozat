@@ -7,6 +7,14 @@ export type User = {
     roles: string[]
 }
 
+export type ManagedUser = {
+    id: string,
+    email: string,
+    roles: string[],
+    isArchived: boolean,
+    archivedAt: string | null
+}
+
 
 export type LoginCreds = {
     emaiL: string,

@@ -1,0 +1,60 @@
+<div
+    class="grid w-full grid-cols-1 gap-3 rounded-box border border-base-300 bg-base-100 p-4 shadow-sm md:grid-cols-2 xl:grid-cols-5">
+    <div class="rounded-box border border-base-200 bg-base-200/40 p-3">
+        <p class="text-xs font-semibold uppercase opacity-70">Termék neve</p>
+        <p class="mt-2 font-medium">{{ productAsKey()?.silcaCode || productAsKey()?.jmaCode ||
+            productAsKey()?.errebiCode }}</p>
+    </div>
+    <div class="rounded-box border border-base-200 bg-base-200/40 p-3">
+        <p class="text-xs font-semibold uppercase opacity-70">Régi ár</p>
+        <p class="mt-2 font-medium">{{ movementItem().priceBefore }}</p>
+    </div>
+    <div class="rounded-box border border-base-200 bg-base-200/40 p-3">
+        <p class="text-xs font-semibold uppercase opacity-70">Új ár</p>
+        <p class="mt-2 font-medium">{{ movementItem().priceAfter }}</p>
+    </div>
+    <div class="rounded-box border border-base-200 bg-base-200/40 p-3">
+        <p class="text-xs font-semibold uppercase opacity-70">Készleten előtte</p>
+        <p class="mt-2 font-medium">{{ movementItem().quantityBefore }}</p>
+    </div>
+    <div class="rounded-box border border-base-200 bg-base-200/40 p-3">
+        <p class="text-xs font-semibold uppercase opacity-70">Készleten utána</p>
+        <p class="mt-2 font-medium">{{ movementItem().quantityAfter }}</p>
+    </div>
+    <div class="rounded-box border border-base-200 bg-base-200/40 p-3">
+        <p class="text-xs font-semibold uppercase opacity-70">Állapot</p>
+        <p class="badge mt-2 text-white" 
+        [class.badge-info]="movementItem().status === 1"
+            [class.badge-success]="movementItem().status === 2" 
+            [class.badge-error]="movementItem().status === 3">{{
+            movementItem().status | stockMovementStatus}}</p>
+    </div>
+    <div class="rounded-box border border-base-200 bg-base-200/40 p-3">
+        <p class="text-xs font-semibold uppercase opacity-70">Módosítva ekkor</p>
+        <p class="mt-2 font-medium">{{ movementItem().createdAt | date:'yyyy-MM-dd HH:mm:ss' }}</p>
+    </div>
+    @if(movementItem().status !== 1){
+        <div class="rounded-box border border-base-200 bg-base-200/40 p-3">
+        <p class="text-xs font-semibold uppercase opacity-70">Elbírálva ekkor</p>
+        <p class="mt-2 font-medium">{{ movementItem().decidedAt| date:'yyyy-MM-dd HH:mm:ss' }}</p>
+    </div>
+    }
+    <div class="rounded-box border border-base-200 bg-base-200/40 p-3">
+        <p class="text-xs font-semibold uppercase opacity-70">Módosító</p>
+        <p class="mt-2 font-medium">{{ movementItem().user.displayName }}</p>
+    </div>
+    @if(movementItem().status === 1){
+    <div class="space-x-2">
+        <button (click)="approve(movementItem().id)" class="btn btn-success btn-circle"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+          
+        </svg>
+        </button>
+        <button (click)="disApprove(movementItem().id)" class="btn btn-error btn-circle"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+</svg>
+
+        </button>
+    </div>
+    }
+</div>

@@ -13,7 +13,7 @@ export class InitService {
     return this.accountService.refreshToken().pipe(
       tap(user => {
         if (user) {
-          this.accountService.currentUser.set(user);
+          this.accountService.setCurrentUser(user);
           this.accountService.automatedRefreshTokenRequest();
         }
       })

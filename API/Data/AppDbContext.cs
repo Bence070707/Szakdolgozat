@@ -15,6 +15,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
     public DbSet<SaleItem> SaleItems { get; set; }
     public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
     public DbSet<PurchaseOrderItem> PurchaseOrderItems { get; set; }
+    public DbSet<StockMovement> StockMovements { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -42,7 +43,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
 
         modelBuilder.Entity<PurchaseOrder>()
         .HasMany(o => o.Items)
-        .WithOne(o=>o.PurchaseOrder)
+        .WithOne(o => o.PurchaseOrder)
         .HasForeignKey(o => o.PurchaseOrderId)
         .OnDelete(DeleteBehavior.Cascade);
 
@@ -63,6 +64,15 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
                 ConcurrencyStamp = "admin-stamp"
             }
         );
+
+        modelBuilder.Entity<StockMovement>(entity =>
+        {
+            entity.HasOne(sm => sm.User)
+                .WithMany()
+                .HasForeignKey(sm => sm.CreatedBy)
+                .OnDelete(DeleteBehavior.Restrict);
+
+        });
     }
 
     public override Task<int> SaveChangesAsync(

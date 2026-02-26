@@ -4,6 +4,7 @@
             <tr>
                 <th>Email</th>
                 <th>Szerepkörök</th>
+                <th>Státusz</th>
                 <th>Műveletek</th>
             </tr>
         </thead>
@@ -12,7 +13,22 @@
                 <tr>
                     <td>{{user.email}}</td>
                     <td>{{user.roles.join(', ')}}</td>
-                    <td><button (click)="openRolesModal(user)" class="btn btn-primary">Szerepkörök szerkesztése</button></td>
+                    <td>
+                        <span class="badge" [class.badge-success]="!user.isArchived" [class.badge-warning]="user.isArchived">
+                            {{ user.isArchived ? 'Archivált' : 'Aktív' }}
+                        </span>
+                    </td>
+                    <td class="flex gap-2">
+                        <button (click)="openRolesModal(user)" class="btn btn-primary btn-sm">Szerepkörök szerkesztése</button>
+                        <button
+                            (click)="toggleArchive(user)"
+                            class="btn btn-sm"
+                            [class.btn-warning]="!user.isArchived"
+                            [class.btn-success]="user.isArchived"
+                        >
+                            {{ user.isArchived ? 'Visszaállítás' : 'Archiválás' }}
+                        </button>
+                    </td>
                 </tr>
             }
         </tbody>

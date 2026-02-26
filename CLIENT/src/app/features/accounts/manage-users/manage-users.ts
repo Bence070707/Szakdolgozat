@@ -1,6 +1,6 @@
 import { Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { AdminService } from '../../../core/services/admin-service';
-import { User } from '../../../../types/User';
+import { ManagedUser } from '../../../../types/User';
 import { ToastService } from '../../../core/services/toast-service';
 
 @Component({
@@ -13,9 +13,9 @@ export class ManageUsers implements OnInit {
   @ViewChild('rolesModal') rolesModal!: ElementRef<HTMLDialogElement>;
   private adminService = inject(AdminService);
   private toastService = inject(ToastService);
-  protected users = signal<User[]>([]);
+  protected users = signal<ManagedUser[]>([]);
   protected roles = ['Manager', 'Admin'];
-  protected selectedUser: User | null = null;
+  protected selectedUser: ManagedUser | null = null;
   
   ngOnInit(): void {
     this.getUserRoles();
@@ -32,7 +32,7 @@ export class ManageUsers implements OnInit {
     })
   }
 
-  openRolesModal(user: User){
+  openRolesModal(user: ManagedUser){
     this.selectedUser = user;
     this.rolesModal.nativeElement.showModal();
   }
@@ -56,9 +56,33 @@ export class ManageUsers implements OnInit {
           return u;
         }))
         this.rolesModal.nativeElement.close();
+        this.toastService.success('Szerepkörök sikeresen frissítve');
       },
-      error: err => console.log(err)
+      error: () => this.toastService.error('Hiba történt a szerepkörök mentése során')
       
+    })
+  }
+
+  toggleArchive(user: ManagedUser){
+    const request$ = user.isArchived
+      ? this.adminService.unarchiveUser(user.id)
+      : this.adminService.archiveUser(user.id);
+
+    request$.subscribe({
+      next: () => {
+        this.users.update(users => users.map(u => {
+          if (u.id !== user.id) return u;
+
+          return {
+            ...u,
+            isArchived: !u.isArchived,
+            archivedAt: u.isArchived ? null : new Date().toISOString()
+          }
+        }));
+
+        this.toastService.success(user.isArchived ? 'Fiók visszaállítva' : 'Fiók archiválva');
+      },
+      error: () => this.toastService.error('Hiba történt a művelet során')
     })
   }
 }

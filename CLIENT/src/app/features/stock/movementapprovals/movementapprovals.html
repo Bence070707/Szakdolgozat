@@ -1,1 +1,22 @@
-<p>movementapprovals works!</p>
+@if(this.stockMovements() && this.stockMovements()?.items?.length! > 0){
+    @if(this.stockMovements()?.metadata; as metadata){
+
+        <app-paginator 
+        [pageNumber]="metadata.currentPage" 
+        [totalCount]="metadata.totalCount" 
+        [pageSize]="metadata.pageSize"
+        (pageChange)="onPageChangeKeys($event)" 
+        [totalPages]="metadata.totalPages" 
+        [pageSizeOptions]="[5, 10]"
+        [showSearchInput]="false">
+    </app-paginator>
+}
+<div class="mx-4 flex flex-col gap-2">
+    @for (stockMovement of stockMovements()?.items; track stockMovement.id) {
+    <app-movement-item (onDisApproval)="disApprove($event)" (onApproval)="approve($event)" [movementItem]="stockMovement"></app-movement-item>
+
+    }
+</div>
+}@else {
+<div class="text-5xl text-center h-[75vh] mt-6">Nincsen megjeleníthető készletmozgás!</div>
+}

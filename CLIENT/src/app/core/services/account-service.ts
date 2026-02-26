@@ -52,7 +52,12 @@ export class AccountService {
   }
 
   logout() {
-    this.currentUser.set(null);
+    this.http.post(this.url + 'account/logout', {}, { withCredentials: true }).subscribe({
+      next: () => {
+        this.currentUser.set(null);
+
+      }
+    })
   }
 
   setCurrentUser(user: User) {
