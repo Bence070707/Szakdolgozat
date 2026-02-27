@@ -3,5 +3,7 @@ export interface Heel {
     code: string;
     price: number;
     quantity: number;
+    isArchived: boolean,
+    archivedAt: Date
 }
 

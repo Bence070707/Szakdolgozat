@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastService } from '../../../core/services/toast-service';
 import { Location } from '@angular/common';
+import { AccountService } from '../../../core/services/account-service';
 
 @Component({
   selector: 'app-key-detailed',
@@ -19,6 +20,7 @@ export class KeyDetailed implements OnInit {
   private fb = inject(FormBuilder);
   protected isEditMode = signal(false);
   private toastService = inject(ToastService)
+  protected accountService = inject(AccountService);
   private location = inject(Location);
 
   protected keyForm = this.fb.nonNullable.group({
@@ -41,19 +43,47 @@ export class KeyDetailed implements OnInit {
     })
   }
 
-  protected toggleEdit(value?: boolean){
-    this.isEditMode.update(x => value ?? !x);
-    if(this.currentKey()) this.keyForm.patchValue(this.currentKey() as Key);
+  archiveKey() {
+    if (this.currentKey()) {
+      this.keysService.archiveKey(this.currentKey()?.id!).subscribe({
+        next: () => {
+          this.toastService.success("Kulcs sikeresen archiválva.");
+          this.currentKey.update(y => {
+            if (!y) return y;
+            return { ...y, isArchived: true };
+          })
+        }
+      })
+    }
   }
 
-  updateKey(id: string){
-    if(this.keyForm.valid && this.currentKey()){
+  unArchiveKey() {
+    if (this.currentKey()) {
+      this.keysService.unArchiveKey(this.currentKey()?.id!).subscribe({
+        next: () => {
+          this.toastService.success("Kulcs sikeresen aktiválva.");
+          this.currentKey.update(y => {
+            if (!y) return y;
+            return { ...y, isArchived: false };
+          })
+        }
+      })
+    }
+  }
+
+  protected toggleEdit(value?: boolean) {
+    this.isEditMode.update(x => value ?? !x);
+    if (this.currentKey()) this.keyForm.patchValue(this.currentKey() as Key);
+  }
+
+  updateKey(id: string) {
+    if (this.keyForm.valid && this.currentKey()) {
       const updatedKey = {
         ...this.currentKey(),
         ...this.keyForm.getRawValue()
       } as Key;
-      
-      
+
+
       this.keysService.updateKey(id, updatedKey).subscribe({
         next: response => {
           this.currentKey.set(response);
@@ -69,7 +99,7 @@ export class KeyDetailed implements OnInit {
     }
   }
 
-  goBack(){
+  goBack() {
     this.location.back();
   }
 }

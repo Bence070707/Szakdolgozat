@@ -11,12 +11,13 @@ export class HeelsService {
   private http = inject(HttpClient);
   private url = environment.apiUrl;
 
-  getHeels(pageNumber = 1, pageSize = 5, search = '') {
+  getHeels(pageNumber = 1, pageSize = 5, search = '', includeArchived = false) {
     let params = new HttpParams();
 
     params = params.append('pageNumber', pageNumber);
     params = params.append('pageSize', pageSize);
     params = params.append('search', search);
+    params = params.append('includeArchived', includeArchived);
     return this.http.get<PaginatedResult<Heel>>(this.url + 'heels', { params });
   }
 
@@ -30,5 +31,13 @@ export class HeelsService {
 
   getAllHeels(){
     return this.http.get<Heel[]>(this.url + 'heels/' + 'getallheels');
+  }
+
+  archiveHeel(id: string){
+    return this.http.post(this.url + 'heels/archive/' + id,{});
+  }
+
+  unArchiveHeel(id: string){
+    return this.http.post(this.url + 'heels/unarchive/' + id,{});
   }
 }

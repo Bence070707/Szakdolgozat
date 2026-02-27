@@ -56,8 +56,8 @@ export const routes: Routes = [
         ]
     },
     {
-        path:'accounts',
-        component:Accounts,
+        path: 'accounts',
+        component: Accounts,
         canActivate: [adminGuard]
     },
     {

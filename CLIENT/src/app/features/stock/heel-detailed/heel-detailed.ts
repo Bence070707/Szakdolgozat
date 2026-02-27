@@ -5,6 +5,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastService } from '../../../core/services/toast-service';
 import { Heel } from '../../../../types/Heel';
 import { Location } from '@angular/common';
+import { AccountService } from '../../../core/services/account-service';
 
 @Component({
   selector: 'app-heel-detailed',
@@ -19,6 +20,7 @@ export class HeelDetailed {
   private fb = inject(FormBuilder);
   protected isEditMode = signal(false);
   private toastService = inject(ToastService)
+  protected accountService = inject(AccountService);
   private location = inject(Location);
 
   protected heelForm = this.fb.nonNullable.group({
@@ -38,6 +40,34 @@ export class HeelDetailed {
         console.error('Error fetching heel:', err);
       }
     })
+  }
+
+  archiveHeel() {
+    if (this.currentHeel()) {
+      this.heelsService.archiveHeel(this.currentHeel()?.id!).subscribe({
+        next: () => {
+          this.toastService.success("Sarok sikeresen archiválva.");
+          this.currentHeel.update(y => {
+            if (!y) return y;
+            return { ...y, isArchived: true };
+          })
+        }
+      })
+    }
+  }
+
+  unArchiveHeel() {
+    if (this.currentHeel()) {
+      this.heelsService.unArchiveHeel(this.currentHeel()?.id!).subscribe({
+        next: () => {
+          this.toastService.success("Sarok sikeresen aktiválva.");
+          this.currentHeel.update(y => {
+            if (!y) return y;
+            return { ...y, isArchived: false };
+          })
+        }
+      })
+    }
   }
 
   protected toggleEdit(value?: boolean) {

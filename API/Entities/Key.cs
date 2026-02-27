@@ -12,4 +12,6 @@ public class Key
     public string JmaCode { get; set; } = "";
     public required int Price { get; set; }
     public required int Quantity { get; set; }
+    public bool IsArchived { get; set; }
+    public DateTime? ArchivedAt { get; set; }
 }

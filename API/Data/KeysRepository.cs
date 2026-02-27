@@ -14,14 +14,18 @@ public class KeysRepository(AppDbContext context, UserManager<AppUser> userManag
         return await context.Keys.FindAsync(id);
     }
 
-    public async Task<IReadOnlyList<Key>> GetAllKeysAsync()
+    public async Task<IReadOnlyList<Key>> GetAllKeysAsync(bool includeArchived = false)
     {
-        return await context.Keys.ToListAsync();
+        return await context.Keys
+            .Where(x => includeArchived || !x.IsArchived)
+            .ToListAsync();
     }
 
-    public async Task<PaginatedResult<Key>> GetKeysAsync(PagingParams pagingParams)
+    public async Task<PaginatedResult<Key>> GetKeysAsync(PagingParams pagingParams, bool includeArchived = false)
     {
-        var query = context.Keys.AsQueryable();
+        var query = context.Keys
+            .Where(x => includeArchived || !x.IsArchived)
+            .AsQueryable();
         if (!string.IsNullOrEmpty(pagingParams.Search) && !string.IsNullOrWhiteSpace(pagingParams.Search))
         {
             query = query.Where(
@@ -65,5 +69,27 @@ public class KeysRepository(AppDbContext context, UserManager<AppUser> userManag
 
         context.StockMovements.Add(movement);
         return await context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<bool> ArchiveKeyAsync(string id)
+    {
+        var updated = await context.Keys
+            .Where(x => x.Id == id && !x.IsArchived)
+            .ExecuteUpdateAsync(setter => setter
+                .SetProperty(x => x.IsArchived, _ => true)
+                .SetProperty(x => x.ArchivedAt, _ => DateTime.UtcNow));
+
+        return updated > 0;
+    }
+
+    public async Task<bool> UnarchiveKeyAsync(string id)
+    {
+        var updated = await context.Keys
+            .Where(x => x.Id == id && x.IsArchived)
+            .ExecuteUpdateAsync(setter => setter
+                .SetProperty(x => x.IsArchived, _ => false)
+                .SetProperty(x => x.ArchivedAt, _ => null));
+
+        return updated > 0;
     }
 }

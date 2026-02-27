@@ -11,12 +11,13 @@ export class KeysService {
   private http = inject(HttpClient);
   private url = environment.apiUrl;
 
-  getKeys(pageNumber = 1, pageSize = 5, search = '') {
+  getKeys(pageNumber = 1, pageSize = 5, search = '', includeArchived = false) {
     let params = new HttpParams();
 
     params = params.append('pageNumber', pageNumber);
     params = params.append('pageSize', pageSize);
     params = params.append('search', search);
+    params = params.append('includeArchived', includeArchived);
     return this.http.get<PaginatedResult<Key>>(this.url + 'keys', { params });
   }
 
@@ -31,5 +32,13 @@ export class KeysService {
   getAllKeys() {
     return this.http.get<Key[]>(this.url + 'keys/' + 'getallkeys');
 
+  }
+
+  archiveKey(id: string){
+    return this.http.post(this.url + 'keys/archive/' + id,{});
+  }
+
+  unArchiveKey(id: string){
+    return this.http.post(this.url + 'keys/unarchive/' + id,{});
   }
 }

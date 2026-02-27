@@ -4,7 +4,6 @@ import { BusyService } from '../../core/services/busy-service';
 import { FormsModule, NgForm } from '@angular/forms';
 import { AccountService } from '../../core/services/account-service';
 import { ToastService } from '../../core/services/toast-service';
-import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-header',
@@ -27,7 +26,7 @@ export class Header {
       },
       error: err => {
         console.log(err);
-        this.toastService.error('Valami hiba történt bejelentkezés során.');
+        this.toastService.error('Nem megfelelő jelszó vagy email cím.');
       }
     })
   }
