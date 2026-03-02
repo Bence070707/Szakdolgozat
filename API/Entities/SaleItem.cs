@@ -1,4 +1,3 @@
-using System;
 using API.Enums;
 
 namespace API.Entities;

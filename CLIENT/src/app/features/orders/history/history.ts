@@ -27,8 +27,7 @@ export class History implements OnInit {
   initOrder(){
     this.orderService.getOrders(this.pageSize, this.pageNumber).subscribe({
       next: response => {
-        console.log(response);
-        
+        console.log(response); 
         this.orders.set(response);  
       },
       error: (err) => {

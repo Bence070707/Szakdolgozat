@@ -1,10 +1,11 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, output, signal } from '@angular/core';
 import { StockMovementService } from '../../../core/services/stock-movement-service';
 import { PaginatedResult } from '../../../../types/Pagination';
 import { StockMovement } from '../../../../types/StockMovement';
 import { MovementItem } from './movement-item/movement-item';
 import { Paginator } from "../../../partials/paginator/paginator";
 import { ToastService } from '../../../core/services/toast-service';
+import { AccountService } from '../../../core/services/account-service';
 
 @Component({
   selector: 'app-movementapprovals',
@@ -15,7 +16,9 @@ import { ToastService } from '../../../core/services/toast-service';
 export class Movementapprovals implements OnInit {
   private stockMovementsService = inject(StockMovementService);
   private toastService = inject(ToastService);
+  protected accountService = inject(AccountService);
   protected stockMovements = signal<PaginatedResult<StockMovement> | null>(null);
+  protected pendingOnly = signal(false);
   pageNumber = 1;
   pageSize = 5
 
@@ -24,7 +27,7 @@ export class Movementapprovals implements OnInit {
   }
 
   initStockMovements() {
-    this.stockMovementsService.getStockMovements(this.pageNumber, this.pageSize).subscribe({
+    this.stockMovementsService.getStockMovements(this.pageNumber, this.pageSize, '', this.pendingOnly()).subscribe({
       next: (result) => {
         this.stockMovements.set(result);
       },
@@ -40,11 +43,18 @@ export class Movementapprovals implements OnInit {
     this.initStockMovements();
   }
 
+  onPendingOnlyChanged(event: Event) {
+    this.pendingOnly.set((event.target as HTMLInputElement).checked);
+    this.pageNumber = 1;
+    this.initStockMovements();
+  }
+
   approve(movementId: string) {
     this.stockMovementsService.approve(movementId).subscribe({
       next: () => {
         this.toastService.success('Sikeresen elfogadta a készletmozgást!');
         this.initStockMovements();
+        this.stockMovementsService.initApprovalCount();
       },
       error: err => {
         console.log('Hiba: ' + err);
@@ -58,6 +68,7 @@ export class Movementapprovals implements OnInit {
       next: () => {
         this.toastService.success('Sikeresen elutasította a készletmozgást!');
         this.initStockMovements();
+        this.stockMovementsService.initApprovalCount();
       },
       error: err => {
         console.log('Hiba: ' + err);

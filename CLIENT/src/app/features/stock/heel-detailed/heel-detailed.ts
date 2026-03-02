@@ -6,6 +6,7 @@ import { ToastService } from '../../../core/services/toast-service';
 import { Heel } from '../../../../types/Heel';
 import { Location } from '@angular/common';
 import { AccountService } from '../../../core/services/account-service';
+import { StockMovementService } from '../../../core/services/stock-movement-service';
 
 @Component({
   selector: 'app-heel-detailed',
@@ -15,6 +16,7 @@ import { AccountService } from '../../../core/services/account-service';
 })
 export class HeelDetailed {
   private heelsService = inject(HeelsService);
+  private stocksService = inject(StockMovementService);
   protected currentHeel = signal<Heel | null>(null);
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
@@ -88,6 +90,7 @@ export class HeelDetailed {
           this.currentHeel.set(response);
           this.toggleEdit(false);
           this.heelForm.markAsUntouched();
+          this.stocksService.initApprovalCount();
           this.toastService.success('Sikeres adatfrissítés.');
         },
         error: (err) => {

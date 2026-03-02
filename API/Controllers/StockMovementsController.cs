@@ -1,9 +1,7 @@
-using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -14,9 +12,9 @@ namespace API.Controllers
     public class StockMovementsController(IStockMovementRepository stockMovementRepository) : ControllerBase
     {
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<StockMovement>>> GetStockMovements([FromQuery] PagingParams pagingParams)
+        public async Task<ActionResult<IReadOnlyList<StockMovement>>> GetStockMovements([FromQuery] PagingParams pagingParams, [FromQuery] bool pendingOnly = false)
         {
-            var stockMovements = await stockMovementRepository.GetStockMovements(pagingParams);
+            var stockMovements = await stockMovementRepository.GetStockMovements(pagingParams, pendingOnly);
             return Ok(stockMovements);
         }
 
@@ -38,6 +36,12 @@ namespace API.Controllers
             if(!success) return BadRequest("Hiba történt a készletmozgás elfogadásakor!");
 
             return Ok();
+        }
+
+        [HttpGet("getpendingapprovalcount")]
+        public async Task<ActionResult> GetPendingApprovalCount()
+        {
+            return Ok(new {Count = await stockMovementRepository.GetApprovalCount()});
         }
     }
 }

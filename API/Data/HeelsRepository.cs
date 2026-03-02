@@ -1,4 +1,4 @@
-using System;
+using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
@@ -59,5 +59,21 @@ public class HeelsRepository(AppDbContext context) : IHeelsRepository
                 .SetProperty(x => x.ArchivedAt, _ => null));
 
         return updated > 0;
+    }
+
+    public async Task<string?> CreateHeel(CreateHeelDto createHeelDto)
+    {
+        var newHeel = new Heel
+        {
+            Code = createHeelDto.Code,
+            Quantity = createHeelDto.Quantity,
+            Price = createHeelDto.Price
+        };
+
+        context.Heels.Add(newHeel);
+        var result = await context.SaveChangesAsync() > 0;
+
+        if (result) return newHeel.Id;
+        return null;
     }
 }

@@ -22,6 +22,7 @@ export class ReportsService {
     this.http.get<Report>(this.url + 'reports', { params }).subscribe({
       next: response => {
         this.report.set(response);
+        console.log(response);
       },
       error: err => {
         console.log(err);

@@ -1,4 +1,4 @@
-using System;
+using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
@@ -91,5 +91,21 @@ public class KeysRepository(AppDbContext context, UserManager<AppUser> userManag
                 .SetProperty(x => x.ArchivedAt, _ => null));
 
         return updated > 0;
+    }
+
+    public async Task<string?> CreateKey(CreateKeyDto createKeyDto)
+    {
+        var newKey = new Key
+        {
+            SilcaCode = createKeyDto.SilcaCode,
+            ErrebiCode = createKeyDto.ErrebiCode ?? "",
+            JmaCode = createKeyDto.JmaCode ?? "",
+            Quantity = createKeyDto.Quantity,
+            Price = createKeyDto.Price
+        };
+        context.Keys.Add(newKey);
+        var result =  await context.SaveChangesAsync() > 0;
+        if(result) return newKey.Id;
+        return null;
     }
 }

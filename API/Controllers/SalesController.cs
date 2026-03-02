@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using API.DTOs;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,9 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult> CreateSale(CreateSaleDTO createSaleDTO)
         {
-            await salesRepository.CreateSaleAsnyc(createSaleDTO);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(userId == null) return Unauthorized();
+            await salesRepository.CreateSaleAsnyc(createSaleDTO, userId);
             return Ok();
         }
     }

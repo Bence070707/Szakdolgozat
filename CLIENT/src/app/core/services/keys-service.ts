@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Key } from '../../../types/Key';
 import { environment } from '../../../environments/environment.development';
 import { PaginatedResult } from '../../../types/Pagination';
+import { CreateKeyDto } from '../../../types/CreateKeyDto';
 
 @Injectable({
   providedIn: 'root',
@@ -40,5 +41,9 @@ export class KeysService {
 
   unArchiveKey(id: string){
     return this.http.post(this.url + 'keys/unarchive/' + id,{});
+  }
+
+  createKey(key: CreateKeyDto){
+    return this.http.post<{keyId: string}>(this.url + 'keys/createkey', key);
   }
 }

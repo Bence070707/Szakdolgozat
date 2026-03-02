@@ -1,4 +1,3 @@
-using System;
 using API.DTOs;
 using API.Entities;
 using API.Enums;
@@ -10,10 +9,11 @@ namespace API.Data;
 
 public class OrdersRepository(AppDbContext context, IEmailService emailService) : IOrdersRepository
 {
-    public async Task<OrderDTO> CreateDraft()
+    public async Task<OrderDTO> CreateDraft(string userDisplayName)
     {
         var order = new PurchaseOrder
         {
+            CreatedBy = userDisplayName,
             PurchaseOrderStatus = PurchaseOrderStatus.DRAFT
         };
         context.PurchaseOrders.Add(order);
@@ -21,10 +21,11 @@ public class OrdersRepository(AppDbContext context, IEmailService emailService) 
         return order.ToDTO();
     }
 
-    public async Task CreateOrderAsync(CreatePurchaseOrderDTO createPurchaseOrderDTO)
+    public async Task CreateOrderAsync(CreatePurchaseOrderDTO createPurchaseOrderDTO, string userId)
     {
         var order = new PurchaseOrder
         {
+            CreatedBy = userId,
             Note = createPurchaseOrderDTO.Note,
             PurchaseOrderStatus = createPurchaseOrderDTO.PurchaseOrderStatus,
             Items = [.. createPurchaseOrderDTO.Items.Select(o => new PurchaseOrderItem

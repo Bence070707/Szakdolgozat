@@ -14,7 +14,7 @@ export class OrderService {
   draftsLoading = signal<boolean>(false);
   drafts = signal<Order[] | null>(null);
 
-  getOrders(pageSize = 5, pageNumber = 1){
+  getOrders(pageSize = 5, pageNumber = 1) {
     let params = new HttpParams()
 
     params = params.append('pageSize', pageSize);
@@ -22,31 +22,31 @@ export class OrderService {
     return this.http.get<PaginatedResult<Order>>(this.url + 'orders', { params });
   }
 
-  getSummarisedOrderItems(id: string){
+  getSummarisedOrderItems(id: string) {
     return this.http.get<SummarisedOrderItem[]>(this.url + 'orders/' + id + '/summarisedorderitem')
   }
 
-  getDrafts(){
+  getDrafts() {
     return this.http.get<Order[]>(this.url + 'orders/' + 'getdrafts');
   }
 
-  getOrder(id: string){
+  getOrder(id: string) {
     return this.http.get<Order>(this.url + 'orders/' + id);
   }
 
-  getNewDraft(){
-    return this.http.post<Order>(this.url + 'orders/' + "draft",{})
+  getNewDraft() {
+    return this.http.post<Order>(this.url + 'orders/' + "draft", {})
   }
 
-  deleteOrder(id: string){
+  deleteOrder(id: string) {
     return this.http.delete(this.url + 'orders/' + id);
   }
 
-  updateOrder(order: Order){
+  updateOrder(order: Order) {
     return this.http.put(this.url + 'orders/' + order.id, order);
   }
 
-    loadDrafts() {
+  loadDrafts() {
     this.draftsLoading.set(true);
 
     this.http.get<Order[]>(this.url + 'orders/' + 'getdrafts')
@@ -57,11 +57,11 @@ export class OrderService {
       });
   }
 
-  submitOrder(order: Order){
+  submitOrder(order: Order) {
     return this.http.post(this.url + 'orders/' + order.id + '/submit', order);
   }
 
-  receiveOrder(order: Order){
+  receiveOrder(order: Order) {
     return this.http.post(this.url + 'orders/' + order.id + '/receive', order);
   }
 }

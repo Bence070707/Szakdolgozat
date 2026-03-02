@@ -1,4 +1,3 @@
-using System;
 using API.DTOs;
 using API.Entities;
 using API.Enums;
@@ -8,7 +7,7 @@ namespace API.Data;
 
 public class SalesRepository(AppDbContext context) : ISalesRepository
 {
-    public async Task CreateSaleAsnyc(CreateSaleDTO createSaleDTO)
+    public async Task CreateSaleAsnyc(CreateSaleDTO createSaleDTO, string userId)
     {
         using var transaction = await context.Database.BeginTransactionAsync();
 
@@ -29,6 +28,7 @@ public class SalesRepository(AppDbContext context) : ISalesRepository
 
         }
         sale.TotalAmount = sale.Items.Sum(s => s.LineTotal);
+        sale.UserId = userId;
         context.Sales.Add(sale);
         await context.SaveChangesAsync();
 

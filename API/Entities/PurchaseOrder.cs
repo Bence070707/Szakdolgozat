@@ -1,4 +1,3 @@
-using System;
 using API.DTOs;
 using API.Enums;
 
@@ -28,6 +27,7 @@ public static class PurchaseOrderExtensions
             return new OrderDTO
             {
                 Id = purchaseOrder.Id,
+                CreatedBy = purchaseOrder.CreatedBy,
                 Items = [.. purchaseOrder.Items.Select(o => new PurchaseOrderItemDTO
                 {
                     Id = o.KeyId!,

@@ -1,4 +1,3 @@
-using System;
 using API.DTOs;
 using API.Enums;
 using API.Interfaces;
@@ -26,6 +25,7 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
         var referenceTo = (to ?? DateTime.UtcNow).Date.AddDays(1);
 
         var query = context.Sales
+            .Include(x => x.User)
             .Where(x => x.SoldAt >= referenceFrom && x.SoldAt < referenceTo);
 
         var totalRevenue = await query
@@ -42,7 +42,13 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
         {
             TotalRevenue = totalRevenue,
             TotalSales = totalSales,
-            TotalItemsSold = totalItemsSold
+            TotalItemsSold = totalItemsSold,
+            UserReportData = new UserReportData
+            {
+                Id = query.Select(x => x.User.Id).FirstOrDefault(),
+                DisplayName = query.Select(x => x.User.DisplayName).FirstOrDefault(),
+                Email = query.Select(x => x.User.Email).FirstOrDefault()
+            }
         };
     }
 
@@ -54,6 +60,7 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
         var end = start.AddYears(1);
 
         var query = context.Sales
+            .Include(x => x.User)
             .Where(x => x.SoldAt >= start && x.SoldAt < end);
 
         var totalRevenue = await query
@@ -70,7 +77,13 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
         {
             TotalRevenue = totalRevenue,
             TotalSales = totalSales,
-            TotalItemsSold = totalItemsSold
+            TotalItemsSold = totalItemsSold,
+            UserReportData = new UserReportData
+            {
+                Id = query.Select(x => x.User.Id).FirstOrDefault(),
+                DisplayName = query.Select(x => x.User.DisplayName).FirstOrDefault(),
+                Email = query.Select(x => x.User.Email).FirstOrDefault()
+            }
         };
     }
 
@@ -82,6 +95,7 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
         var end = start.AddMonths(1);
 
         var query = context.Sales
+            .Include(x => x.User)
             .Where(x => x.SoldAt >= start && x.SoldAt < end);
 
         var totalRevenue = await query
@@ -98,7 +112,13 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
         {
             TotalRevenue = totalRevenue,
             TotalSales = totalSales,
-            TotalItemsSold = totalItemsSold
+            TotalItemsSold = totalItemsSold,
+            UserReportData = new UserReportData
+            {
+                Id = query.Select(x => x.User.Id).FirstOrDefault(),
+                DisplayName = query.Select(x => x.User.DisplayName).FirstOrDefault(),
+                Email = query.Select(x => x.User.Email).FirstOrDefault()
+            }
         };
     }
 
@@ -110,6 +130,7 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
         var end = start.AddDays(7);
 
         var query = context.Sales
+            .Include(x => x.User)
             .Where(x => x.SoldAt >= start && x.SoldAt < end);
 
         var totalRevenue = await query
@@ -126,7 +147,13 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
         {
             TotalRevenue = totalRevenue,
             TotalSales = totalSales,
-            TotalItemsSold = totalItemsSold
+            TotalItemsSold = totalItemsSold,
+            UserReportData = new UserReportData
+            {
+                Id = query.Select(x => x.User.Id).FirstOrDefault(),
+                DisplayName = query.Select(x => x.User.DisplayName).FirstOrDefault(),
+                Email = query.Select(x => x.User.Email).FirstOrDefault()
+            }
         };
     }
 
@@ -136,7 +163,9 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
         var start = reference.Date;
         var end = start.AddDays(1);
 
-        var query = context.Sales.Where(x => x.SoldAt >= start && x.SoldAt < end);
+        var query = context.Sales
+            .Include(x => x.User)
+            .Where(x => x.SoldAt >= start && x.SoldAt < end);
 
         var totalRevenue = await query
             .SumAsync(x => (int?)x.TotalAmount) ?? 0;
@@ -152,7 +181,13 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
         {
             TotalRevenue = totalRevenue,
             TotalSales = totalSales,
-            TotalItemsSold = totalItemsSold
+            TotalItemsSold = totalItemsSold,
+            UserReportData = new UserReportData
+            {
+                Id = query.Select(x => x.User.Id).FirstOrDefault(),
+                DisplayName = query.Select(x => x.User.DisplayName).FirstOrDefault(),
+                Email = query.Select(x => x.User.Email).FirstOrDefault()
+            }
         };
     }
 

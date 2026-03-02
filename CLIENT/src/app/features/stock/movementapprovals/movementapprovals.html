@@ -1,6 +1,6 @@
-@if(this.stockMovements() && this.stockMovements()?.items?.length! > 0){
+@if(this.stockMovements()){
     @if(this.stockMovements()?.metadata; as metadata){
-
+    <div class="flex items-center gap-2 mx-4">
         <app-paginator 
         [pageNumber]="metadata.currentPage" 
         [totalCount]="metadata.totalCount" 
@@ -9,8 +9,17 @@
         [totalPages]="metadata.totalPages" 
         [pageSizeOptions]="[5, 10]"
         [showSearchInput]="false">
-    </app-paginator>
+        </app-paginator>
+
+        @if(accountService.currentUser()?.roles?.includes('Admin')){
+        <div class="flex gap-2 items-center ml-auto">
+            <input type="checkbox" class="checkbox" [checked]="pendingOnly()" (change)="onPendingOnlyChanged($event)">
+            <p>Függőben</p>
+        </div>
+        }
+    </div>
 }
+@if(stockMovements()?.items?.length! > 0){
 <div class="mx-4 flex flex-col gap-2">
     @for (stockMovement of stockMovements()?.items; track stockMovement.id) {
     <app-movement-item (onDisApproval)="disApprove($event)" (onApproval)="approve($event)" [movementItem]="stockMovement"></app-movement-item>
@@ -19,4 +28,5 @@
 </div>
 }@else {
 <div class="text-5xl text-center h-[75vh] mt-6">Nincsen megjeleníthető készletmozgás!</div>
+}
 }

@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment.development';
 import { PaginatedResult } from '../../../types/Pagination';
 import { Heel } from '../../../types/Heel';
+import { CreateHeelDto } from '../../../types/CreateHeelDto';
 
 @Injectable({
   providedIn: 'root',
@@ -39,5 +40,9 @@ export class HeelsService {
 
   unArchiveHeel(id: string){
     return this.http.post(this.url + 'heels/unarchive/' + id,{});
+  }
+
+  createHeel(heel: CreateHeelDto){
+    return this.http.post<{heelId: string}>(this.url + 'heels/createheel', heel);
   }
 }

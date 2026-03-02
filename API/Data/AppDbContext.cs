@@ -1,9 +1,7 @@
-using System;
 using API.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace API.Data;
 
@@ -35,6 +33,12 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
                 );
             });
         });
+
+        modelBuilder.Entity<Sale>()
+        .HasOne(s => s.User)
+        .WithMany()
+        .HasForeignKey(s => s.UserId)
+        .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Sale>()
         .HasMany(s => s.Items)

@@ -1,4 +1,3 @@
-using System;
 using API.DTOs;
 using API.Entities;
 using API.Helpers;
@@ -55,9 +54,18 @@ public class StockMovementRepository(AppDbContext context) : IStockMovementRepos
         return await context.SaveChangesAsync() > 0;
     }
 
-    public async Task<PaginatedResult<StockMovement>> GetStockMovements(PagingParams pagingParams)
+    public async Task<int> GetApprovalCount()
     {
-        var query = context.StockMovements.Include(x => x.User).AsQueryable();
+        return await context.StockMovements.CountAsync(x => x.Status == StockMovementStatus.PENDING);
+    }
+
+    public async Task<PaginatedResult<StockMovement>> GetStockMovements(PagingParams pagingParams, bool pendingOnly = false)
+    {
+        var query = context.StockMovements
+            .Where(x => !pendingOnly || x.Status == StockMovementStatus.PENDING)
+            .OrderByDescending(x => x.CreatedAt)
+            .Include(x => x.User)
+            .AsQueryable();
         return await PaginationHelper.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
     }
 }

@@ -1,12 +1,10 @@
 using System.Security.Claims;
-using API.Data;
+using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -94,6 +92,15 @@ namespace API.Controllers
             if (!unarchived) return BadRequest("Hiba történt a kulcs visszaállítása során");
 
             return Ok();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("createkey")]
+        public async Task<ActionResult<string>> CreateKey(CreateKeyDto createKeyDto)
+        {
+            var result = await keysRepository.CreateKey(createKeyDto);
+            if(result is not null) return Ok(new {KeyId = result});
+            return BadRequest("Hiba történt a kulcs létrehozása során.");
         }
     }
 }

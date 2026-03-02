@@ -1,5 +1,7 @@
 <div class="flex flex-col gap-2 h-full items-center">
-    <h1 class="text-2xl font-serif bg-base-100 border border-primary shadow w-full text-center rounded-lg text-base-content p-2">{{type() |
+    <h1
+        class="text-2xl font-serif bg-base-100 border border-primary shadow w-full text-center rounded-lg text-base-content p-2">
+        {{type() |
         reportType}} Kimutatás</h1>
     <div class="h-1/3 w-full text-center">
         @if(type() !== 'fromto'){
@@ -8,7 +10,7 @@
         <p class="badge badge-outline badge-primary mb-2">Kezdődátum: </p>
         <div class="flex gap-2 justify-center">
             <input type="date" class="input input-primary" [value]="value().toISOString().substring(0,10)"
-                (change)="valueChange($event)" [max]="today"/>
+                (change)="valueChange($event)" [max]="today" />
             @if(type() !== 'fromto'){
 
             <button (click)="previousPeriod()" class="btn btn-circle"><svg xmlns="http://www.w3.org/2000/svg"
@@ -29,7 +31,7 @@
             <div class="w-1/2 flex flex-col items-center">
                 <p class="badge badge-outline badge-primary mb-2">Kezdődátum: </p>
                 <input type="date" class="input input-primary" [value]="value().toISOString().substring(0,10)"
-                    (change)="valueChange($event)" [max]="today"/>
+                    (change)="valueChange($event)" [max]="today" />
             </div>
             <div class="w-1/2 flex flex-col align-middle">
 
@@ -42,14 +44,14 @@
             <div class="w-1/2 flex flex-col items-center">
                 <p class="badge badge-outline badge-secondary mb-2">Záródátum: </p>
                 <input type="date" class="input input-secondary" [value]="to().toISOString().substring(0,10)"
-                    (change)="toChange($event)" [min]="value() | date:'yyyy-MM-dd'" [max]="today"/>
+                    (change)="toChange($event)" [min]="value() | date:'yyyy-MM-dd'" [max]="today" />
             </div>
         </div>
         }
     </div>
     @if(reportsService.report(); as report){
     @if(reportsService.report()?.totalRevenue! > 0){
-    <div class="stats shadow mt-10 w-full h-fit">
+    <div class="stats stats-vertical xl:stats-horizontal shadow mt-10 w-full max-w-full h-fit">
         <div class="stat">
             <div class="stat-figure text-primary">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -87,6 +89,20 @@
             <div class="stat-title">Eladott termékek száma</div>
             <div class="stat-value text-black">{{report.totalItemsSold}} DB</div>
         </div>
+        @if(type() === 'daily'){
+
+        <div class="stat">
+            <div class="stat-figure text-accent">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    class="inline-block h-8 w-8 stroke-current">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+            </div>
+            <div class="stat-title">Felhasználó</div>
+            <div class="stat-value text-accent">{{report.userReportData.displayName}}</div>
+        </div>
+        }
     </div>
     }
     @else {

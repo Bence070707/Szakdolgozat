@@ -3,20 +3,25 @@ using API.Entities;
 using API.Helpers;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
     [Authorize(Roles = "Admin,Manager")]
     [Route("[controller]")]
     [ApiController]
-    public class OrdersController(IOrdersRepository orderRepository) : ControllerBase
+    public class OrdersController(IOrdersRepository orderRepository, UserManager<AppUser> userManager) : ControllerBase
     {
         [HttpPost]
         public async Task<ActionResult> CreateOrder(CreatePurchaseOrderDTO createPurchaseOrderDTO)
         {
-            await orderRepository.CreateOrderAsync(createPurchaseOrderDTO);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId is null) return Unauthorized();
+            var user = await userManager.FindByIdAsync(userId);
+            if(user is null) return Unauthorized();
+            await orderRepository.CreateOrderAsync(createPurchaseOrderDTO, user.DisplayName);
             return Ok();
         }
 
@@ -30,7 +35,12 @@ namespace API.Controllers
         [HttpPost("draft")]
         public async Task<ActionResult<OrderDTO>> CreateDraft()
         {
-            var order = await orderRepository.CreateDraft();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId is null) return Unauthorized();
+            var user = await userManager.FindByIdAsync(userId);
+            if(user is null) return Unauthorized();
+
+            var order = await orderRepository.CreateDraft(user.DisplayName);
             return Ok(order);
         }
 

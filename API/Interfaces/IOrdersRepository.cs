@@ -1,4 +1,3 @@
-using System;
 using API.DTOs;
 using API.Entities;
 using API.Helpers;
@@ -7,8 +6,8 @@ namespace API.Interfaces;
 
 public interface IOrdersRepository
 {
-    Task CreateOrderAsync(CreatePurchaseOrderDTO createPurchaseOrderDTO);
-    Task<OrderDTO> CreateDraft();
+    Task CreateOrderAsync(CreatePurchaseOrderDTO createPurchaseOrderDTO, string userId);
+    Task<OrderDTO> CreateDraft(string userId);
     Task<PurchaseOrder?> GetOrderById(string id);
     Task<bool> UpdateOrder(string id, OrderDTO orderDTO);
     Task<IReadOnlyList<PurchaseOrder>> GetDrafts();

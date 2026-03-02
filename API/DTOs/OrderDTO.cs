@@ -1,5 +1,3 @@
-using System;
-using API.Entities;
 using API.Enums;
 
 namespace API.DTOs;
@@ -7,6 +5,7 @@ namespace API.DTOs;
 public class OrderDTO
 {
     public required string Id { get; set; }
+    public string CreatedBy { get; set; } = string.Empty;
     public ICollection<PurchaseOrderItemDTO> Items { get; set; } = [];
     public string? Note { get; set; }
     public string? SupplierEmail { get; set; }

@@ -5,8 +5,7 @@
                     class="h-full font-semibold text-base-content flex items-center justify-center hover:bg-primary hover:text-white">KÉSZLET</a>
             </li>
             <li class="w-1/2 h-full">
-                <a routerLink="movementapprovals"
-                    routerLinkActive="bg-primary text-white scale-103"
+                <a routerLink="movementapprovals" routerLinkActive="bg-primary text-white scale-103"
                     class="h-full font-semibold text-base-content flex items-center justify-center transition-all"
                     [ngClass]="
     isAdmin()
@@ -14,6 +13,12 @@
       : 'opacity-50 cursor-not-allowed'
     ">
                     KÉSZLETMÓDOSÍTÁSOK
+                    @if(isAdmin()){
+                    <span
+                    [class.badge-error]="this.stocksService.waitingForApproval() > 0"
+                    [class.badge-success]="this.stocksService.waitingForApproval() === 0"
+                    class="badge badge-soft badge-sm">{{this.stocksService.waitingForApproval()}}</span>
+                    }
                 </a>
             </li>
         </ul>

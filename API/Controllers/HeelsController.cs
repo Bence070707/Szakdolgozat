@@ -1,8 +1,8 @@
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
+using API.DTOs;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -86,6 +86,15 @@ namespace API.Controllers
             if (!unarchived) return BadRequest("Hiba történt a sarok visszaállítása során");
 
             return Ok();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("createheel")]
+        public async Task<ActionResult<string>> CreateHeel(CreateHeelDto createHeelDto)
+        {
+            var result = await heelsRepository.CreateHeel(createHeelDto);
+            if (result is not null) return Ok(new { HeelId = result });
+            return BadRequest("Hiba történt a sarok létrehozása során.");
         }
     }
 }

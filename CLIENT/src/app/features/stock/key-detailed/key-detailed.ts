@@ -6,6 +6,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ToastService } from '../../../core/services/toast-service';
 import { Location } from '@angular/common';
 import { AccountService } from '../../../core/services/account-service';
+import { StockMovementService } from '../../../core/services/stock-movement-service';
 
 @Component({
   selector: 'app-key-detailed',
@@ -15,6 +16,7 @@ import { AccountService } from '../../../core/services/account-service';
 })
 export class KeyDetailed implements OnInit {
   private keysService = inject(KeysService);
+  private stocksService = inject(StockMovementService);
   protected currentKey = signal<Key | null>(null);
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
@@ -90,6 +92,7 @@ export class KeyDetailed implements OnInit {
           this.toggleEdit(false);
           this.keyForm.markAsUntouched();
           this.toastService.success('Sikeres adatfrissítés.');
+          this.stocksService.initApprovalCount();
         },
         error: (err) => {
           console.log(err);

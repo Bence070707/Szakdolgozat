@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { KeysService } from '../../../core/services/keys-service';
 import { Key } from '../../../../types/Key';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { PaginatedResult } from '../../../../types/Pagination';
 import { Paginator } from '../../../partials/paginator/paginator';
 import { Heel } from '../../../../types/Heel';
@@ -9,6 +9,10 @@ import { HeelsService } from '../../../core/services/heels-service';
 import { BusyService } from '../../../core/services/busy-service';
 import { AccountService } from '../../../core/services/account-service';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators, ɵInternalFormsSharedModule } from '@angular/forms';
+import { CreateKeyDto } from '../../../../types/CreateKeyDto';
+import { ToastService } from '../../../core/services/toast-service';
+import { CreateHeelDto } from '../../../../types/CreateHeelDto';
+import { StockMovementService } from '../../../core/services/stock-movement-service';
 
 @Component({
   selector: 'app-current',
@@ -18,11 +22,20 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators, ɵInternalFo
 })
 export class Current {
   submitKeyAdd() {
-    throw new Error('Method not implemented.');
+    if (this.keyAddForm.invalid) return;
+    this.createKey();
   }
+
+  submitHeelAdd() {
+    if (this.heelAddForm.invalid) return;
+    this.createHeel();
+  }
+  private stocksService = inject(StockMovementService);
   private keysService = inject(KeysService);
   private heelsService = inject(HeelsService);
   protected busyService = inject(BusyService);
+  private router = inject(Router);
+  private toastService = inject(ToastService);
   protected accountService = inject(AccountService);
   private fb = inject(FormBuilder);
   protected keys = signal<PaginatedResult<Key> | null>(null);
@@ -30,6 +43,7 @@ export class Current {
   protected includeArchived = signal(false);
   protected includeArchivedHeels = signal(false);
   protected isKeyAdding = signal(false);
+  protected isHeelAdding = signal(false);
   pageNumber = 1;
   pageSize = 5;
   searchKey = '';
@@ -39,6 +53,13 @@ export class Current {
     silcaCode: ["", [Validators.required, Validators.minLength(3)]],
     errebiCode: [""],
     jmaCode: [""],
+    price: [0, [Validators.required, Validators.min(1)]],
+    quantity: [0, [Validators.min(0)]],
+  });
+
+  protected heelAddForm = this.fb.nonNullable.group({
+    name: ["", [Validators.required, Validators.minLength(1)]],
+    size: [0, [Validators.required, Validators.min(1)]],
     price: [0, [Validators.required, Validators.min(1)]],
     quantity: [0, [Validators.min(0)]],
   });
@@ -61,6 +82,11 @@ export class Current {
   toggleKeyAdding() {
     this.keyAddForm.reset();
     this.isKeyAdding.set(!this.isKeyAdding());
+  }
+
+  toggleHeelAdding() {
+    this.heelAddForm.reset();
+    this.isHeelAdding.set(!this.isHeelAdding());
   }
 
   private getKeys() {
@@ -105,5 +131,39 @@ export class Current {
   onSearchHeelChange(event: string) {
     this.searchHeel = event;
     this.getHeels();
+  }
+
+  createKey(){
+    this.keysService.createKey(this.keyAddForm.value as CreateKeyDto).subscribe({
+      next: response =>{
+        this.router.navigateByUrl("stocks/keys/" + response.keyId);
+        this.toastService.success("Kulcs sikeresen hozzáadva");
+      },
+      error: err => {
+        console.log(err);
+        this.toastService.error("Hiba történt a kulcs hozzáadása során.");
+      }
+    })
+  }
+
+  createHeel(){
+    const heelValues = this.heelAddForm.getRawValue();
+
+    const payload: CreateHeelDto = {
+      code: `${heelValues.name.trim()}-${heelValues.size}`,
+      price: heelValues.price,
+      quantity: heelValues.quantity
+    };
+
+    this.heelsService.createHeel(payload).subscribe({
+      next: response => {
+        this.router.navigateByUrl("stocks/heels/" + response.heelId);
+        this.toastService.success("Sarok sikeresen hozzáadva");
+      },
+      error: err => {
+        console.log(err);
+        this.toastService.error("Hiba történt a sarok hozzáadása során.");
+      }
+    })
   }
 }

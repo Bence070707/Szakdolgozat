@@ -1,5 +1,6 @@
 export type Order = {
     id: string,
+    createdBy: string,
     items: OrderItem[],
     note?: string,
     supplierEmail: string,
