@@ -6,6 +6,7 @@ import { Order, OrderItem } from '../../../../types/Order';
 import { ToastService } from '../../../core/services/toast-service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { ConfirmService } from '../../../core/services/confirm-service';
 
 @Component({
   selector: 'app-new-order',
@@ -15,10 +16,15 @@ import { Location } from '@angular/common';
 })
 export class NewOrder implements OnInit, OnDestroy {
   private orderService = inject(OrderService);
+  private confirmService = inject(ConfirmService);
   private toastService = inject(ToastService);
   protected order = signal<Order | null>(null);
   private keyService = inject(KeysService);
   protected keys = signal<KeyOrder[]>([]);
+  protected filteredKeys = computed(() => {
+    return this.keys().filter(x => x.silcaCode.toLowerCase().includes(this.searchFilter()));
+  });
+  protected searchFilter = signal('');
   private route = inject(ActivatedRoute);
   private location = inject(Location);
   @Output() tab = new EventEmitter<'drafts' | 'new'>();
@@ -189,6 +195,11 @@ Horváth László.`;
     );
   }
 
+  async confirmDeleteDraft(){
+    const ok = await this.confirmService.confirm('Biztosan törli a piszkozatot?');
+    if(ok) this.deleteDraft();
+  }
+
   deleteDraft() {
     this.orderService.deleteOrder(this.order()!.id).subscribe({
       next: () => {
@@ -201,6 +212,11 @@ Horváth László.`;
         this.toastService.error("Hiba történt a törlés során.")
       }
     })
+  }
+
+  async confirmSubmitOrder(){
+    const ok = await this.confirmService.confirm('Biztosan elküldi a rendelést?');
+    if(ok) this.submitOrder();
   }
 
   submitOrder() {

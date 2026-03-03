@@ -52,6 +52,51 @@ public class ReportsRepository(AppDbContext context) : IReportsRepository
         };
     }
 
+    public async Task<ReportDTO> GetMonthlyUserReport(DateTime? month, string userId)
+    {
+        var reference = month ?? DateTime.UtcNow;
+
+        var start = new DateTime(reference.Year, reference.Month, 1);
+        var end = start.AddMonths(1);
+
+        var query = context.Sales
+            .Include(x => x.User)
+            .Where(x => x.SoldAt >= start && x.SoldAt < end && x.UserId == userId);
+
+        var totalRevenue = await query
+            .SumAsync(x => (int?)x.TotalAmount) ?? 0;
+
+        var totalSales = await query
+            .CountAsync();
+
+        var totalItemsSold = await query
+            .SelectMany(x => x.Items)
+            .SumAsync(x => (int?)x.Quantity) ?? 0;
+
+        var selectedUser = await context.Users
+            .Where(x => x.Id == userId)
+            .Select(x => new UserReportData
+            {
+                Id = x.Id,
+                DisplayName = x.DisplayName,
+                Email = x.Email
+            })
+            .FirstOrDefaultAsync();
+
+        return new ReportDTO
+        {
+            TotalRevenue = totalRevenue,
+            TotalSales = totalSales,
+            TotalItemsSold = totalItemsSold,
+            UserReportData = selectedUser ?? new UserReportData
+            {
+                Id = userId,
+                DisplayName = string.Empty,
+                Email = string.Empty
+            }
+        };
+    }
+
     private async Task<ReportDTO> GetYearlyReport(DateTime? from)
     {
         var reference = from ?? DateTime.UtcNow;

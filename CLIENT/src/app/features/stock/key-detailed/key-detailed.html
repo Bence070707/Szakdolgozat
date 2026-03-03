@@ -35,7 +35,7 @@
             <div class="space-x-2">
                 @if(accountService.currentUser()?.roles?.includes('Admin')){
 
-                <button (click)="currentKey()?.isArchived ? unArchiveKey() : archiveKey()"
+                <button (click)="currentKey()?.isArchived ? confirmUnArchiveKey() : confirmArchiveKey()"
                     [class.btn-warning]="!currentKey()?.isArchived" 
                     [class.btn-success]="currentKey()?.isArchived"
 
@@ -72,7 +72,7 @@
             </svg></button>
     </div>
     }@else {
-    <form class="flex flex-col gap-4 w-1/2" [formGroup]="keyForm" (ngSubmit)="updateKey(key.id)">
+    <form class="flex flex-col gap-4 w-1/2" [formGroup]="keyForm" (ngSubmit)="confirmUpdateKey($event, key.id)">
         <fieldset class="fieldset">
             <legend class="fieldset-legend">Ár:</legend>
             <input type="number" class="input w-full" placeholder="Ár" formControlName="price" />

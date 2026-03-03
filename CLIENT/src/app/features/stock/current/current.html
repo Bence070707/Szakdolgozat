@@ -92,7 +92,7 @@
 }
 }@if(isKeyAdding()) {
 <div class="flex justify-center w-full">
-    <form [formGroup]="keyAddForm" (ngSubmit)="submitKeyAdd()"
+    <form [formGroup]="keyAddForm" (ngSubmit)="confirmSubmitKeyAdd($event)"
         class="flex flex-col gap-4 max-w-xl items-stretch mb-4 w-full">
         <h1 class="text-4xl font-semibold text-center">Kulcs hozzáadás</h1>
         <label class="floating-label w-full">
@@ -208,7 +208,7 @@
 
 @if(isHeelAdding()) {
 <div class="flex justify-center w-full">
-    <form [formGroup]="heelAddForm" (ngSubmit)="submitHeelAdd()"
+    <form [formGroup]="heelAddForm" (ngSubmit)="confirmSubmitHeelAdd($event)"
         class="flex flex-col gap-4 max-w-xl items-stretch mb-4 w-full">
         <h1 class="text-4xl font-semibold text-center">Sarok hozzáadás</h1>
         <label class="floating-label w-full">

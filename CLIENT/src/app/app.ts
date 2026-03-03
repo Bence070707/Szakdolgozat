@@ -5,10 +5,11 @@ import { Footer } from "./partials/footer/footer";
 import { AccountService } from './core/services/account-service';
 import { User } from '../types/User';
 import { tap } from 'rxjs';
+import { Confirm } from "./partials/confirm/confirm";
 
 @Component({
   selector: 'app-root',
-  imports: [Header, RouterOutlet, Footer],
+  imports: [Header, RouterOutlet, Footer, Confirm],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

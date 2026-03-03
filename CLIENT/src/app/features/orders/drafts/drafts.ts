@@ -4,6 +4,7 @@ import { Order } from '../../../../types/Order';
 import { RouterLink } from "@angular/router";
 import { DatePipe } from '@angular/common';
 import { ToastService } from '../../../core/services/toast-service';
+import { ConfirmService } from '../../../core/services/confirm-service';
 
 @Component({
   selector: 'app-drafts',
@@ -14,11 +15,17 @@ import { ToastService } from '../../../core/services/toast-service';
 export class Drafts implements OnInit {
   private orderService = inject(OrderService);
   private toastService = inject(ToastService);
+  private confirmService = inject(ConfirmService);
   drafts = this.orderService.drafts;
   loading = this.orderService.draftsLoading;
 
   ngOnInit(): void {
     this.orderService.loadDrafts();
+  }
+
+  async confirmDeleteDraft(id: string){
+    const ok = await this.confirmService.confirm('Biztosan törlöd a piszkozatot?');
+    if(ok) this.deleteDraft(id);
   }
 
   deleteDraft(id: string) {

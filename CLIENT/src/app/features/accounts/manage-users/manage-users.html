@@ -21,7 +21,7 @@
                     <td class="flex gap-2">
                         <button (click)="openRolesModal(user)" class="btn btn-primary btn-sm">Szerepkörök szerkesztése</button>
                         <button
-                            (click)="toggleArchive(user)"
+                            (click)="confirmToggleArchive(user)"
                             class="btn btn-sm"
                             [class.btn-warning]="!user.isArchived"
                             [class.btn-success]="user.isArchived"

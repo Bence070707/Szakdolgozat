@@ -9,6 +9,7 @@ export type User = {
 
 export type ManagedUser = {
     id: string,
+    displayName: string,
     email: string,
     roles: string[],
     isArchived: boolean,

@@ -4,7 +4,37 @@
         {{type() |
         reportType}} Kimutatás</h1>
     <div class="h-1/3 w-full text-center">
-        @if(type() !== 'fromto'){
+        @if(type() === 'user'){
+
+        <p class="badge badge-outline badge-primary mb-2">Felhasználó: </p>
+        <div class="flex gap-2 justify-center mb-2">
+            <select class="select select-primary" [value]="selectedUserId()" (change)="userChange($event)">
+                @for (user of users(); track user.id) {
+                <option [value]="user.id">{{user.displayName}} ({{user.email}})</option>
+                }
+            </select>
+        </div>
+
+        <p class="badge badge-outline badge-secondary mb-2">Hónap: </p>
+        <div class="flex gap-2 justify-center">
+            <input type="month" class="input input-secondary" [value]="value().toISOString().substring(0,7)"
+                (change)="valueChange($event)" [max]="today.substring(0,7)" />
+
+        </div>
+        <div class="mt-2 flex gap-2 justify-center">
+            <button (click)="previousPeriod()" class="btn btn-circle"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+            </button>
+            <button (click)="nextPeriod()" class="btn btn-circle"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                </svg>
+            </button>
+        </div>
+        }
+        @else if(type() !== 'fromto'){
 
 
         <p class="badge badge-outline badge-primary mb-2">Kezdődátum: </p>

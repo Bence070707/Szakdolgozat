@@ -34,5 +34,17 @@ namespace API.Controllers
             var report = await reportsRepository.GetReportFromTo(reportType, from, to);
             return Ok(report);
         }
+
+        [HttpGet("user-month")]
+        public async Task<ActionResult<ReportDTO>> GetUserMonthlyReport([FromQuery]DateTime? month, [FromQuery]string userId)
+        {
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return BadRequest("A felhasználó azonosító kötelező");
+            }
+
+            var report = await reportsRepository.GetMonthlyUserReport(month, userId);
+            return Ok(report);
+        }
     }
 }

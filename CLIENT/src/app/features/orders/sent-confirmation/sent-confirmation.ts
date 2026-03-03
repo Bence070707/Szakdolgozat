@@ -6,6 +6,7 @@ import { ToastService } from '../../../core/services/toast-service';
 import { SummarisedOrderItem } from '../../../../types/SummarisedOrderItem';
 import { FormsModule } from '@angular/forms';
 import { Location } from '@angular/common';
+import { ConfirmService } from '../../../core/services/confirm-service';
 
 @Component({
   selector: 'app-sent-confirmation',
@@ -16,6 +17,7 @@ import { Location } from '@angular/common';
 export class SentConfirmation implements OnInit {
   private orderService = inject(OrderService);
   private toastService = inject(ToastService);
+  private confirmService = inject(ConfirmService);
   private location = inject(Location);
   private route = inject(ActivatedRoute);
   protected order = signal<Order | null>(null);
@@ -57,6 +59,11 @@ export class SentConfirmation implements OnInit {
         }
       })
     }
+  }
+
+  async confirmReceiveOrder(){
+    const ok = await this.confirmService.confirm('Biztosan rögzíted a rendelést?');
+    if(ok) this.receiveOrder();
   }
 
   receiveOrder() {

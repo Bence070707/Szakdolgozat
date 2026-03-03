@@ -17,6 +17,8 @@ export class ReportTypePipe implements PipeTransform {
         return 'Éves';
       case 'fromto':
         return 'Egyedi';
+      case 'user':
+        return 'Felhasználói';
       default:
         return value;
     }

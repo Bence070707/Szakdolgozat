@@ -1,9 +1,9 @@
 <div [class.p-4]="isEdit == true">
     @if(keys().length > 0){
     <div class="mb-3 text-center ">
-        <button (click)="submitOrder()" class="btn btn-success rounded-r-none rounded-l-full">Rendelés
+        <button (click)="confirmSubmitOrder()" class="btn btn-success rounded-r-none rounded-l-full">Rendelés
             elküldése</button>
-        <button (click)="deleteDraft()" class="btn btn-error rounded-l-none rounded-r-full">Piszkozat törlése</button>
+        <button (click)="confirmDeleteDraft()" class="btn btn-error rounded-l-none rounded-r-full">Piszkozat törlése</button>
         <button (click)="goBack()" class="btn btn-primary btn-circle ml-2"><svg xmlns="http://www.w3.org/2000/svg"
                 fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
@@ -11,9 +11,13 @@
         </button>
     </div>
     <div class="flex gap-2 h-[75vh]" [class.h-[85vh]]="isEdit == true">
-        <div class="w-1/2 bg-base-200 text-base-content flex flex-col gap-2 overflow-y-auto h-full rounded-lg p-4">
-            @for (key of keys(); track $index) {
-            <div class="flex gap-2 bg-base-100 p-4 items-center rounded-lg">
+        <div class="w-1/2 bg-base-200 text-base-content flex flex-col gap-2 overflow-auto h-full rounded-lg p-4">
+            <input type="search" class="input shrink-0 text-center self-center border-success focus:outline-success" placeholder="Keresés..." 
+            [value]="searchFilter()"    
+            (input)="searchFilter.set($any($event.target).value)" 
+            />
+            @for (key of filteredKeys(); track $index) {
+            <div class="flex sm:flex-col lg:flex-row gap-2 bg-base-100 p-4 items-center rounded-lg">
                 <p class="flex-1">{{key.silcaCode}}</p>
                 <p class="flex-1">{{key.errebiCode || 'Nincs megadva'}}</p>
                 <p class="flex-1">{{key.jmaCode || 'Nincs megadva'}}</p>

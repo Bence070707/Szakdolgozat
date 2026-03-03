@@ -2,6 +2,7 @@ import { Component, ElementRef, inject, OnInit, signal, ViewChild } from '@angul
 import { AdminService } from '../../../core/services/admin-service';
 import { ManagedUser } from '../../../../types/User';
 import { ToastService } from '../../../core/services/toast-service';
+import { ConfirmService } from '../../../core/services/confirm-service';
 
 @Component({
   selector: 'app-manage-users',
@@ -13,10 +14,11 @@ export class ManageUsers implements OnInit {
   @ViewChild('rolesModal') rolesModal!: ElementRef<HTMLDialogElement>;
   private adminService = inject(AdminService);
   private toastService = inject(ToastService);
+  private confirmService = inject(ConfirmService);
   protected users = signal<ManagedUser[]>([]);
   protected roles = ['Manager', 'Admin'];
   protected selectedUser: ManagedUser | null = null;
-  
+
   ngOnInit(): void {
     this.getUserRoles();
   }
@@ -32,38 +34,46 @@ export class ManageUsers implements OnInit {
     })
   }
 
-  openRolesModal(user: ManagedUser){
+  openRolesModal(user: ManagedUser) {
     this.selectedUser = user;
     this.rolesModal.nativeElement.showModal();
   }
 
-  toggleRole(event: Event, role: string){
-    if(!this.selectedUser) return;
+  toggleRole(event: Event, role: string) {
+    if (!this.selectedUser) return;
     const isChecked = (event.target as HTMLInputElement).checked;
-    if(isChecked){
+    if (isChecked) {
       this.selectedUser.roles.push(role)
-    }else{
+    } else {
       this.selectedUser.roles = this.selectedUser.roles.filter(r => r !== role)
     }
   }
 
-  updateRoles(){
-    if(!this.selectedUser) return;
+  updateRoles() {
+    if (!this.selectedUser) return;
     this.adminService.editUserRoles(this.selectedUser.id, this.selectedUser.roles).subscribe({
       next: roles => {
         this.users.update(users => users.map(u => {
-          if(u.id === this.selectedUser?.id) u.roles = roles;
+          if (u.id === this.selectedUser?.id) u.roles = roles;
           return u;
         }))
         this.rolesModal.nativeElement.close();
         this.toastService.success('Szerepkörök sikeresen frissítve');
       },
       error: () => this.toastService.error('Hiba történt a szerepkörök mentése során')
-      
+
     })
   }
 
-  toggleArchive(user: ManagedUser){
+  async confirmToggleArchive(user: ManagedUser) {
+    const action = user.isArchived ? 'visszaállítani' : 'archiválni';
+    const ok = await this.confirmService.confirm(`Biztosan ${action} szeretnéd a fiókot?`);
+    if (ok) {
+      this.toggleArchive(user);
+    }
+  }
+
+  toggleArchive(user: ManagedUser) {
     const request$ = user.isArchived
       ? this.adminService.unarchiveUser(user.id)
       : this.adminService.archiveUser(user.id);

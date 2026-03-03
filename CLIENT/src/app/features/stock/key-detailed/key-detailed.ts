@@ -7,6 +7,7 @@ import { ToastService } from '../../../core/services/toast-service';
 import { Location } from '@angular/common';
 import { AccountService } from '../../../core/services/account-service';
 import { StockMovementService } from '../../../core/services/stock-movement-service';
+import { ConfirmService } from '../../../core/services/confirm-service';
 
 @Component({
   selector: 'app-key-detailed',
@@ -16,6 +17,7 @@ import { StockMovementService } from '../../../core/services/stock-movement-serv
 })
 export class KeyDetailed implements OnInit {
   private keysService = inject(KeysService);
+  private confirmService = inject(ConfirmService);
   private stocksService = inject(StockMovementService);
   protected currentKey = signal<Key | null>(null);
   private route = inject(ActivatedRoute);
@@ -33,16 +35,35 @@ export class KeyDetailed implements OnInit {
 
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    this.keysService.getKeyById(id).subscribe({
-      next: (key) => {
-        this.currentKey.set(key);
-        this.keyForm.patchValue(key);
-      },
-      error: (err) => {
-        console.error('Error fetching key:', err);
-      }
+    this.initKey();
+
+  }
+
+  initKey() {
+    const id = this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.keysService.getKeyById(id).subscribe({
+          next: (key) => {
+            this.currentKey.set(key);
+            this.keyForm.patchValue(key);
+          },
+          error: (err) => {
+            console.error('Error fetching key:', err);
+          }
+        })
+      };
     })
+  }
+
+  async confirmArchiveKey() {
+    const ok = await this.confirmService.confirm('Biztosan archiválod?');
+    if (ok) this.archiveKey();
+  }
+
+  async confirmUnArchiveKey() {
+    const ok = await this.confirmService.confirm('Biztosan aktiválod?');
+    if (ok) this.unArchiveKey();
   }
 
   archiveKey() {
@@ -78,6 +99,12 @@ export class KeyDetailed implements OnInit {
     if (this.currentKey()) this.keyForm.patchValue(this.currentKey() as Key);
   }
 
+  async confirmUpdateKey(event: Event, id: string){
+    event.stopPropagation();
+    const ok = await this.confirmService.confirm("Biztos frissíted a készletet?");
+    if(ok) this.updateKey(id);
+  }
+
   updateKey(id: string) {
     if (this.keyForm.valid && this.currentKey()) {
       const updatedKey = {
@@ -88,7 +115,7 @@ export class KeyDetailed implements OnInit {
 
       this.keysService.updateKey(id, updatedKey).subscribe({
         next: response => {
-          this.currentKey.set(response);
+          this.initKey();
           this.toggleEdit(false);
           this.keyForm.markAsUntouched();
           this.toastService.success('Sikeres adatfrissítés.');

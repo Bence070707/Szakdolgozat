@@ -1,1 +1,1 @@
-export type ReportType = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'fromto';
+export type ReportType = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'fromto' | 'user';

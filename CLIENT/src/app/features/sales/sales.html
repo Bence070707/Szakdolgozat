@@ -1,7 +1,8 @@
 <div class="flex m-4 gap-2 h-[90vh]">
     <div
         class="flex flex-wrap gap-2 w-2/3 justify-evenly bg-base-100 border-2 border-primary shadow-lg rounded-lg overflow-y-auto py-4">
-        <input type="text" class="input w-full m-4 mt-0 border-accent" placeholder="Keresés..." (input)="searchTerm.set($any($event.target).value)">
+        <input type="search" class="input w-full m-4 mt-0 border-accent focus:outline-success" placeholder="Keresés..."
+            (input)="searchTerm.set($any($event.target).value)">
         @if(filteredItems().length > 0){
         @for (item of filteredItems(); track $index) {
         @if (isKey(item)) {
@@ -26,20 +27,28 @@
         </div>
         }
         @else {
-            @for (item of sales(); track item.productId) {
-                @if(isHeel(item)){
-                    <div class="w-full">
-                        <app-heel-item-cart [item]="item" (delete)="deleteFromSales($event)" (add)="addToSales($event)" (decrement)="decrement($event)"></app-heel-item-cart>
-                    </div>
-                }
-                @if (isKey(item)) {
-                    <div class="w-full">
-                        <app-key-item-cart (delete)="deleteFromSales($event)" (decrement)="decrement($event)" (increment)="addToSales($event)" [item]="item"></app-key-item-cart>
-                    </div>
-                }
-            }
-            <div class="w-full flex justify-center mt-2 transform hover:scale-103 transition duration-300">
-                <button (click)="createSale()" class="btn btn-accent ">Eladás</button>
-            </div>
+        @for (item of sales(); track item.productId) {
+        @if(isHeel(item)){
+        <div class="w-full">
+            <app-heel-item-cart [item]="item" (delete)="deleteFromSales($event)" (add)="addToSales($event)"
+                (decrement)="decrement($event)"></app-heel-item-cart>
+        </div>
+        }
+        @if (isKey(item)) {
+        <div class="w-full">
+            <app-key-item-cart (delete)="deleteFromSales($event)" (decrement)="decrement($event)"
+                (increment)="addToSales($event)" [item]="item"></app-key-item-cart>
+        </div>
+        }
+        }
+        @if(salesSum() > 0){
+        <div class="w-full flex justify-center mt-4">
+            <p class="text-xl font-bold">Összesen: {{salesSum() | currency:'HUF ':'symbol':'1.0-0'}}</p>
+        </div>
+        }
+
+        <div class="w-full flex justify-center mt-2 transform hover:scale-103 transition duration-300">
+            <button (click)="confirmCreateSale()" class="btn btn-accent ">Eladás</button>
+        </div>
         }
     </div>

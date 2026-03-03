@@ -48,4 +48,20 @@ export class ReportsService {
       }
     });
   }
+
+  loadMonthlyUserReport(month: Date, userId: string) {
+    let params = new HttpParams();
+
+    params = params.append('month', month.toISOString());
+    params = params.append('userId', userId);
+
+    this.http.get<Report>(this.url + 'reports/user-month', { params }).subscribe({
+      next: response => {
+        this.report.set(response);
+      },
+      error: err => {
+        console.log(err);
+      }
+    });
+  }
 }

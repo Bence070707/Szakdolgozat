@@ -13,6 +13,7 @@ import { CreateKeyDto } from '../../../../types/CreateKeyDto';
 import { ToastService } from '../../../core/services/toast-service';
 import { CreateHeelDto } from '../../../../types/CreateHeelDto';
 import { StockMovementService } from '../../../core/services/stock-movement-service';
+import { ConfirmService } from '../../../core/services/confirm-service';
 
 @Component({
   selector: 'app-current',
@@ -21,17 +22,9 @@ import { StockMovementService } from '../../../core/services/stock-movement-serv
   styleUrl: './current.css',
 })
 export class Current {
-  submitKeyAdd() {
-    if (this.keyAddForm.invalid) return;
-    this.createKey();
-  }
-
-  submitHeelAdd() {
-    if (this.heelAddForm.invalid) return;
-    this.createHeel();
-  }
   private stocksService = inject(StockMovementService);
   private keysService = inject(KeysService);
+  private confirmService = inject(ConfirmService);
   private heelsService = inject(HeelsService);
   protected busyService = inject(BusyService);
   private router = inject(Router);
@@ -67,6 +60,28 @@ export class Current {
   ngOnInit(): void {
     this.getKeys();
     this.getHeels();
+  }
+
+  async confirmSubmitKeyAdd(event: Event){
+    event.stopPropagation();
+    const ok = await this.confirmService.confirm("Biztosan hozzáadod a kulcsot?");
+    if(ok) this.submitKeyAdd();
+  }
+
+  async confirmSubmitHeelAdd(event: Event){
+    event.stopPropagation();
+    const ok = await this.confirmService.confirm("Biztosan hozzáadod a sarkat?");
+    if(ok) this.submitHeelAdd();
+  }
+
+  submitKeyAdd() {
+    if (this.keyAddForm.invalid) return;
+    this.createKey();
+  }
+
+  submitHeelAdd() {
+    if (this.heelAddForm.invalid) return;
+    this.createHeel();
   }
 
   onIncludeArchivedChanged(event: Event) {
@@ -133,9 +148,9 @@ export class Current {
     this.getHeels();
   }
 
-  createKey(){
+  createKey() {
     this.keysService.createKey(this.keyAddForm.value as CreateKeyDto).subscribe({
-      next: response =>{
+      next: response => {
         this.router.navigateByUrl("stocks/keys/" + response.keyId);
         this.toastService.success("Kulcs sikeresen hozzáadva");
       },
@@ -146,7 +161,7 @@ export class Current {
     })
   }
 
-  createHeel(){
+  createHeel() {
     const heelValues = this.heelAddForm.getRawValue();
 
     const payload: CreateHeelDto = {

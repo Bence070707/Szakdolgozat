@@ -1,6 +1,4 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { Heel } from '../../../types/Heel';
 import { KeysService } from '../../core/services/keys-service';
 import { HeelsService } from '../../core/services/heels-service';
 import { HeelToSellUI, KeyToSellUI, SellableItemUI } from '../../../types/SellableItem';
@@ -11,10 +9,12 @@ import { KeyItemCart } from "./key-item-cart/key-item-cart";
 import { SalesService } from '../../core/services/sales-service';
 import { CreateSaleDTO } from '../../../types/CreateSaleItemDTO';
 import { ToastService } from '../../core/services/toast-service';
+import { CurrencyPipe } from '@angular/common';
+import { ConfirmService } from '../../core/services/confirm-service';
 
 @Component({
   selector: 'app-sales',
-  imports: [KeyItem, HeelItem, HeelItemCart, KeyItemCart],
+  imports: [KeyItem, HeelItem, HeelItemCart, KeyItemCart, CurrencyPipe],
   templateUrl: './sales.html',
   styleUrl: './sales.css',
 })
@@ -23,9 +23,15 @@ export class Sales implements OnInit {
   private heelsService = inject(HeelsService);
   private salesService = inject(SalesService);
   private toastService = inject(ToastService);
+  private confirmService = inject(ConfirmService);
   protected sales = signal<SellableItemUI[]>([]);
   protected items = signal<SellableItemUI[]>([]);
   protected searchTerm = signal<string>('');
+  protected salesSum = computed(() => {
+    let sum = 0;
+    this.sales().map(y => sum += y.unitPrice * y.quantity);
+    return sum;
+  })
   filteredItems = computed(() => {
     const value = this.searchTerm().trim().toLowerCase();
 
@@ -36,8 +42,8 @@ export class Sales implements OnInit {
         return item.silcaCode.toLowerCase().includes(value) ||
           item.errebiCode?.toLowerCase().includes(value) ||
           item.jmaCode?.toLowerCase().includes(value);
-      } 
-      if(this.isHeel(item)){
+      }
+      if (this.isHeel(item)) {
         return item.code.toLowerCase().includes(value);
       }
       return item;
@@ -47,6 +53,11 @@ export class Sales implements OnInit {
   ngOnInit(): void {
     this.initHeels();
     this.initKeys();
+  }
+
+  async confirmCreateSale(){
+    const ok = await this.confirmService.confirm('Biztosan rögzíted az eladást?');
+    if(ok) this.createSale();
   }
 
   createSale() {

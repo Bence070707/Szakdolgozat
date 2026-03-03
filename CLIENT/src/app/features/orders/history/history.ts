@@ -8,6 +8,7 @@ import { PurchaseOrderStatusPipePipe } from '../../../core/pipes/purchase-order-
 import { Paginator } from '../../../partials/paginator/paginator';
 import { RouterLink } from "@angular/router";
 import { SummarisedOrderItem } from '../../../../types/SummarisedOrderItem';
+import { ConfirmService } from '../../../core/services/confirm-service';
 
 @Component({
   selector: 'app-history',
@@ -20,6 +21,7 @@ export class History implements OnInit {
   protected selectedOrder: Order | null = null;
   private orderService = inject(OrderService);
   private toastService = inject(ToastService);
+  private confirmService = inject(ConfirmService);
   protected orders = signal<PaginatedResult<Order> | null>(null); 
   pageNumber = 1;
   pageSize = 5;
@@ -45,6 +47,11 @@ export class History implements OnInit {
     this.pageNumber = event.pageNumber;
     this.pageSize = event.pageSize;
     this.initOrder();
+  }
+
+  async confirmDeleteOrder(id: string){
+    const ok = await this.confirmService.confirm('Biztosan törlöd a piszkozatot??');
+    if(ok) this.deleteOrder(id);
   }
 
   deleteOrder(id: string){

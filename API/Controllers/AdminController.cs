@@ -27,6 +27,7 @@ namespace API.Controllers
                 userList.Add(new
                 {
                     user.Id,
+                    user.DisplayName,
                     user.Email,
                     user.IsArchived,
                     user.ArchivedAt,
