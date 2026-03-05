@@ -9,6 +9,7 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
 {
     public DbSet<Key> Keys { get; set; }
     public DbSet<Heel> Heels { get; set; }
+    public DbSet<Other> Others { get; set; }
     public DbSet<Sale> Sales { get; set; }
     public DbSet<SaleItem> SaleItems { get; set; }
     public DbSet<PurchaseOrder> PurchaseOrders { get; set; }

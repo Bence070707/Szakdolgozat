@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { KeysService } from '../../core/services/keys-service';
 import { HeelsService } from '../../core/services/heels-service';
-import { HeelToSellUI, KeyToSellUI, SellableItemUI } from '../../../types/SellableItem';
+import { HeelToSellUI, KeyToSellUI, OtherToSellUI, SellableItemUI } from '../../../types/SellableItem';
 import { KeyItem } from './key-item/key-item';
 import { HeelItem } from './heel-item/heel-item';
 import { HeelItemCart } from "./heel-item-cart/heel-item-cart";
@@ -11,27 +11,34 @@ import { CreateSaleDTO } from '../../../types/CreateSaleItemDTO';
 import { ToastService } from '../../core/services/toast-service';
 import { CurrencyPipe } from '@angular/common';
 import { ConfirmService } from '../../core/services/confirm-service';
+import { OthersService } from '../../core/services/others-service';
+import { OtherItem } from './other-item/other-item';
+import { OtherItemCart } from './other-item-cart/other-item-cart';
 
 @Component({
   selector: 'app-sales',
-  imports: [KeyItem, HeelItem, HeelItemCart, KeyItemCart, CurrencyPipe],
+  imports: [KeyItem, HeelItem, HeelItemCart, KeyItemCart, OtherItem, OtherItemCart, CurrencyPipe],
   templateUrl: './sales.html',
   styleUrl: './sales.css',
 })
 export class Sales implements OnInit {
   private keysService = inject(KeysService);
   private heelsService = inject(HeelsService);
+  private othersService = inject(OthersService);
   private salesService = inject(SalesService);
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmService);
+
   protected sales = signal<SellableItemUI[]>([]);
   protected items = signal<SellableItemUI[]>([]);
   protected searchTerm = signal<string>('');
+
   protected salesSum = computed(() => {
     let sum = 0;
     this.sales().map(y => sum += y.unitPrice * y.quantity);
     return sum;
   })
+
   filteredItems = computed(() => {
     const value = this.searchTerm().trim().toLowerCase();
 
@@ -43,9 +50,15 @@ export class Sales implements OnInit {
           item.errebiCode?.toLowerCase().includes(value) ||
           item.jmaCode?.toLowerCase().includes(value);
       }
+
       if (this.isHeel(item)) {
         return item.code.toLowerCase().includes(value);
       }
+
+      if (this.isOther(item)) {
+        return item.name.toLowerCase().includes(value);
+      }
+
       return item;
     });
   });
@@ -53,11 +66,12 @@ export class Sales implements OnInit {
   ngOnInit(): void {
     this.initHeels();
     this.initKeys();
+    this.initOthers();
   }
 
-  async confirmCreateSale(){
+  async confirmCreateSale() {
     const ok = await this.confirmService.confirm('Biztosan rögzíted az eladást?');
-    if(ok) this.createSale();
+    if (ok) this.createSale();
   }
 
   createSale() {
@@ -70,11 +84,12 @@ export class Sales implements OnInit {
           this.toastService.success('Sikeres eladás.');
           this.initHeels();
           this.initKeys();
+          this.initOthers();
+          this.searchTerm.set('');
         },
         error: (err) => {
           console.log(err);
-          this.toastService.warning('Valami hiba történt.');
-
+          this.toastService.warning('Valami hiba törtent.');
         }
       })
     }
@@ -86,6 +101,7 @@ export class Sales implements OnInit {
         const mapped = response
           .filter(x => x.quantity > 0)
           .map(key => new KeyToSellUI(key));
+
         this.items.update(items => {
           return [
             ...items,
@@ -112,7 +128,26 @@ export class Sales implements OnInit {
             ...mapped
           ]
         })
+      },
+      error: err => {
+        console.log(err);
+      }
+    })
+  }
 
+  private initOthers() {
+    this.othersService.getAllOthers().subscribe({
+      next: response => {
+        const mapped = response
+          .filter(x => x.quantity > 0)
+          .map(other => new OtherToSellUI(other));
+
+        this.items.update(items => {
+          return [
+            ...items,
+            ...mapped
+          ]
+        })
       },
       error: err => {
         console.log(err);
@@ -151,7 +186,6 @@ export class Sales implements OnInit {
       ];
     });
   }
-
 
   deleteFromSales(item: SellableItemUI) {
     this.sales.update(sales =>
@@ -193,5 +227,9 @@ export class Sales implements OnInit {
 
   isHeel(item: SellableItemUI): item is HeelToSellUI {
     return item.type === 'HEEL'
+  }
+
+  isOther(item: SellableItemUI): item is OtherToSellUI {
+    return item.type === 'OTHER'
   }
 }

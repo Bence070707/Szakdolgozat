@@ -13,8 +13,11 @@ export class CreateSaleItemDTO {
             case 'HEEL':
                 this.productType = ProductType.HEEL;
                 break;
+            case 'OTHER':
+                this.productType = ProductType.OTHER;
+                break;
             default:
-                throw new Error(`Ismeretlen terméktípus: ${item.type}`);
+                throw new Error(`Ismeretlen termektipus: ${item.type}`);
         }
         this.productId = item.productId;
         this.quantity = item.quantity;
@@ -33,5 +36,6 @@ export class CreateSaleDTO {
 
 enum ProductType {
     KEY = 1,
-    HEEL = 2
+    HEEL = 2,
+    OTHER = 3
 }

@@ -6,6 +6,7 @@ import { Movementapprovals } from './features/stock/movementapprovals/movementap
 import { KeyDetailed } from './features/stock/key-detailed/key-detailed';
 import { Sales } from './features/sales/sales';
 import { HeelDetailed } from './features/stock/heel-detailed/heel-detailed';
+import { OtherDetailed } from './features/stock/other-detailed/other-detailed';
 import { Orders } from './features/orders/orders';
 import { NewOrder } from './features/orders/new-order/new-order';
 import { SentConfirmation } from './features/orders/sent-confirmation/sent-confirmation';
@@ -31,7 +32,8 @@ export const routes: Routes = [
                 { path: 'current', component: Current },
                 { path: 'movementapprovals', component: Movementapprovals, canActivate: [adminGuard] },
                 { path: 'keys/:id', component: KeyDetailed },
-                { path: 'heels/:id', component: HeelDetailed }
+                { path: 'heels/:id', component: HeelDetailed },
+                { path: 'others/:id', component: OtherDetailed }
             ]
     },
     {

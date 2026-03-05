@@ -8,16 +8,19 @@ import { Heel } from '../../../../types/Heel';
 import { HeelsService } from '../../../core/services/heels-service';
 import { BusyService } from '../../../core/services/busy-service';
 import { AccountService } from '../../../core/services/account-service';
-import { FormBuilder, FormsModule, ReactiveFormsModule, Validators, ɵInternalFormsSharedModule } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CreateKeyDto } from '../../../../types/CreateKeyDto';
 import { ToastService } from '../../../core/services/toast-service';
 import { CreateHeelDto } from '../../../../types/CreateHeelDto';
 import { StockMovementService } from '../../../core/services/stock-movement-service';
 import { ConfirmService } from '../../../core/services/confirm-service';
+import { OthersService } from '../../../core/services/others-service';
+import { Other } from '../../../../types/Other';
+import { CreateOtherDto } from '../../../../types/CreateOtherDto';
 
 @Component({
   selector: 'app-current',
-  imports: [RouterLink, Paginator, ɵInternalFormsSharedModule, ReactiveFormsModule],
+  imports: [RouterLink, Paginator, ReactiveFormsModule],
   templateUrl: './current.html',
   styleUrl: './current.css',
 })
@@ -26,21 +29,30 @@ export class Current {
   private keysService = inject(KeysService);
   private confirmService = inject(ConfirmService);
   private heelsService = inject(HeelsService);
+  private othersService = inject(OthersService);
   protected busyService = inject(BusyService);
   private router = inject(Router);
   private toastService = inject(ToastService);
   protected accountService = inject(AccountService);
   private fb = inject(FormBuilder);
+
   protected keys = signal<PaginatedResult<Key> | null>(null);
   protected heels = signal<PaginatedResult<Heel> | null>(null);
+  protected others = signal<PaginatedResult<Other> | null>(null);
+
   protected includeArchived = signal(false);
   protected includeArchivedHeels = signal(false);
+  protected includeArchivedOthers = signal(false);
+
   protected isKeyAdding = signal(false);
   protected isHeelAdding = signal(false);
+  protected isOtherAdding = signal(false);
+
   pageNumber = 1;
   pageSize = 5;
   searchKey = '';
   searchHeel = '';
+  searchOther = '';
 
   protected keyAddForm = this.fb.nonNullable.group({
     silcaCode: ["", [Validators.required, Validators.minLength(3)]],
@@ -57,21 +69,34 @@ export class Current {
     quantity: [0, [Validators.min(0)]],
   });
 
+  protected otherAddForm = this.fb.nonNullable.group({
+    name: ["", [Validators.required, Validators.minLength(1)]],
+    price: [0, [Validators.required, Validators.min(1)]],
+    quantity: [0, [Validators.min(0)]],
+  });
+
   ngOnInit(): void {
     this.getKeys();
     this.getHeels();
+    this.getOthers();
   }
 
-  async confirmSubmitKeyAdd(event: Event){
+  async confirmSubmitKeyAdd(event: Event) {
     event.stopPropagation();
     const ok = await this.confirmService.confirm("Biztosan hozzáadod a kulcsot?");
-    if(ok) this.submitKeyAdd();
+    if (ok) this.submitKeyAdd();
   }
 
-  async confirmSubmitHeelAdd(event: Event){
+  async confirmSubmitHeelAdd(event: Event) {
     event.stopPropagation();
     const ok = await this.confirmService.confirm("Biztosan hozzáadod a sarkat?");
-    if(ok) this.submitHeelAdd();
+    if (ok) this.submitHeelAdd();
+  }
+
+  async confirmSubmitOtherAdd(event: Event) {
+    event.stopPropagation();
+    const ok = await this.confirmService.confirm("Biztosan hozzáadod az egyéb terméket?");
+    if (ok) this.submitOtherAdd();
   }
 
   submitKeyAdd() {
@@ -84,6 +109,11 @@ export class Current {
     this.createHeel();
   }
 
+  submitOtherAdd() {
+    if (this.otherAddForm.invalid) return;
+    this.createOther();
+  }
+
   onIncludeArchivedChanged(event: Event) {
     this.includeArchived.set((event.target as HTMLInputElement).checked);
     this.getKeys();
@@ -94,6 +124,11 @@ export class Current {
     this.getHeels();
   }
 
+  onIncludeArchivedOthersChanged(event: Event) {
+    this.includeArchivedOthers.set((event.target as HTMLInputElement).checked);
+    this.getOthers();
+  }
+
   toggleKeyAdding() {
     this.keyAddForm.reset();
     this.isKeyAdding.set(!this.isKeyAdding());
@@ -102,6 +137,11 @@ export class Current {
   toggleHeelAdding() {
     this.heelAddForm.reset();
     this.isHeelAdding.set(!this.isHeelAdding());
+  }
+
+  toggleOtherAdding() {
+    this.otherAddForm.reset();
+    this.isOtherAdding.set(!this.isOtherAdding());
   }
 
   private getKeys() {
@@ -126,6 +166,17 @@ export class Current {
     })
   }
 
+  private getOthers() {
+    this.othersService.getOthers(this.pageNumber, this.pageSize, this.searchOther, this.includeArchivedOthers()).subscribe({
+      next: response => {
+        this.others.set(response);
+      },
+      error: error => {
+        console.log(error);
+      }
+    })
+  }
+
   onPageChangeKeys(event: { pageNumber: number; pageSize: number }) {
     this.pageNumber = event.pageNumber;
     this.pageSize = event.pageSize;
@@ -138,6 +189,12 @@ export class Current {
     this.getHeels();
   }
 
+  onPageChangeOthers(event: { pageNumber: number; pageSize: number }) {
+    this.pageNumber = event.pageNumber;
+    this.pageSize = event.pageSize;
+    this.getOthers();
+  }
+
   onSearchKeyChange(event: string) {
     this.searchKey = event;
     this.getKeys();
@@ -148,6 +205,11 @@ export class Current {
     this.getHeels();
   }
 
+  onSearchOtherChange(event: string) {
+    this.searchOther = event;
+    this.getOthers();
+  }
+
   createKey() {
     this.keysService.createKey(this.keyAddForm.value as CreateKeyDto).subscribe({
       next: response => {
@@ -156,7 +218,7 @@ export class Current {
       },
       error: err => {
         console.log(err);
-        this.toastService.error("Hiba történt a kulcs hozzáadása során.");
+        this.toastService.error("Hiba törtent a kulcs hozzáadása során.");
       }
     })
   }
@@ -177,7 +239,22 @@ export class Current {
       },
       error: err => {
         console.log(err);
-        this.toastService.error("Hiba történt a sarok hozzáadása során.");
+        this.toastService.error("Hiba törtent a sarok hozzáadása során.");
+      }
+    })
+  }
+
+  createOther() {
+    const payload: CreateOtherDto = this.otherAddForm.getRawValue();
+
+    this.othersService.createOther(payload).subscribe({
+      next: response => {
+        this.router.navigateByUrl("stocks/others/" + response.otherId);
+        this.toastService.success("Egyeb termék sikeresen hozzáadva");
+      },
+      error: err => {
+        console.log(err);
+        this.toastService.error("Hiba törtent az egyéb termék hozzáadása során.");
       }
     })
   }

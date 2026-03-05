@@ -34,15 +34,13 @@
 <div class="flex flex-col gap-2 mb-4">
     @if(keys()?.items?.length! > 0){
     @for (key of keys()?.items; track $index) {
-    <div class="collapse collapse-arrow bg-base-100 border border-base-300 shadow-lg transition duration-200 hover:scale-101 hover:border-primary hover:border-2 
-      ">
+    <div class="collapse collapse-arrow bg-base-100 border border-base-300 shadow-lg transition duration-200 hover:scale-101 hover:border-primary hover:border-2">
         <input type="checkbox" name="my-accordion-2" />
         <div class="collapse-title flex justify-between">
             <div class="flex flex-col">
                 <div class="flex gap-2">
                     <p class="font-semibold text-base-content">Silca kód</p>
                     @if(key.isArchived && accountService.currentUser()?.roles?.includes('Admin')){
-
                     <div class="badge badge-warning inline">Archivált</div>
                     }@if(!key.isArchived && accountService.currentUser()?.roles?.includes('Admin')) {
                     <div class="badge badge-success inline">Aktív</div>
@@ -54,12 +52,12 @@
             <div class="flex flex-col">
                 <p class="font-semibold text-base-content">Errebi kód</p>
                 <div class="divider my-1"></div>
-                <p>{{key.errebiCode || 'asd'}}</p>
+                <p>{{key.errebiCode || 'N/A'}}</p>
             </div>
             <div class="flex flex-col">
                 <p class="font-semibold text-base-content">Jma kód</p>
                 <div class="divider my-1"></div>
-                <p>{{key.jmaCode || 'asd'}}</p>
+                <p>{{key.jmaCode || 'N/A'}}</p>
             </div>
             <div class="flex flex-col mr-4">
                 <p class="font-semibold text-base-content">Ár</p>
@@ -72,29 +70,29 @@
                 <p>{{key.quantity}}</p>
             </div>
         </div>
-        <div class="collapse-content
-        transition-all duration-500 ease-out h-0 overflow-hidden peer-checked:h-48">
+        <div class="collapse-content transition-all duration-500 ease-out h-0 overflow-hidden peer-checked:h-48">
             <a routerLink="/stocks/keys/{{key.id}}" class="btn btn-primary w-full">RÉSZLETEK
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                     stroke="currentColor" class="size-6">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                 </svg>
-
             </a>
         </div>
     </div>
     }
     }@else {
-        <p class="text-3xl font-semibold text-center">Nincsen találat a keresésre!</p>
+    <p class="text-3xl font-semibold text-center">Nincsen találat a keresésre!</p>
     }
 </div>
 }
-}@if(isKeyAdding()) {
+}
+
+@if(isKeyAdding()) {
 <div class="flex justify-center w-full">
     <form [formGroup]="keyAddForm" (ngSubmit)="confirmSubmitKeyAdd($event)"
         class="flex flex-col gap-4 max-w-xl items-stretch mb-4 w-full">
-        <h1 class="text-4xl font-semibold text-center">Kulcs hozzáadás</h1>
+        <h1 class="text-4xl font-semibold text-center">Kulcs hozzáadása</h1>
         <label class="floating-label w-full">
             <span>Silca kód</span>
             <input type="text" placeholder="Silca kód" class="input w-full" formControlName="silcaCode" />
@@ -126,7 +124,10 @@
 
 @if(!isHeelAdding()){
 @if (heels()) {
-<p class="text-center font-serif text-2xl font-semibold">Sarkak</p>
+<p class="text-center font-serif text-2xl font-semibold">Sarkak@if(busyService.busyRequestCount() > 0)
+    {
+    <span class="loading loading-spinner loading-xl text-primary"></span>
+    }</p>
 @if(heels()?.metadata; as metadata){
 <div class="flex gap-2 w-full">
     <app-paginator [pageNumber]="metadata.currentPage" [totalCount]="metadata.totalCount" [pageSize]="metadata.pageSize"
@@ -149,24 +150,18 @@
         </button>
     </div>
     }
-    @if(busyService.busyRequestCount() > 0)
-    {
-    <span class="loading loading-spinner loading-xl text-primary"></span>
-    }
 </div>
 }
 <div class="flex flex-col gap-2 mb-4">
     @if(heels()?.items?.length! > 0){
     @for (heel of heels()?.items; track $index) {
-    <div
-        class="collapse collapse-arrow bg-base-100 border border-base-300 shadow-lg transition duration-200 hover:scale-101 hover:border-primary hover:border-2">
+    <div class="collapse collapse-arrow bg-base-100 border border-base-300 shadow-lg transition duration-200 hover:scale-101 hover:border-primary hover:border-2">
         <input type="checkbox" name="my-accordion-2" />
         <div class="collapse-title flex justify-between">
             <div class="flex flex-col">
                 <div class="flex gap-2">
                     <p class="font-semibold text-base-content">Kód</p>
                     @if(heel.isArchived){
-
                     <div class="badge badge-warning inline">Archivált</div>
                     }@else {
                     <div class="badge badge-success inline">Aktív</div>
@@ -186,22 +181,20 @@
                 <p>{{heel.quantity}}</p>
             </div>
         </div>
-        <div class="collapse-content
-        transition-all duration-500 ease-in-out h-0 overflow-hidden peer-checked:h-48">
+        <div class="collapse-content transition-all duration-500 ease-in-out h-0 overflow-hidden peer-checked:h-48">
             <a routerLink="/stocks/heels/{{heel.id}}" class="btn btn-primary w-full">RÉSZLETEK
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                     stroke="currentColor" class="size-6">
                     <path stroke-linecap="round" stroke-linejoin="round"
                         d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                 </svg>
-
             </a>
         </div>
     </div>
     }
-}@else {
+    }@else {
     <p class="text-3xl font-semibold text-center">Nincsen találat a keresésre!</p>
-}
+    }
 </div>
 }
 }
@@ -210,7 +203,7 @@
 <div class="flex justify-center w-full">
     <form [formGroup]="heelAddForm" (ngSubmit)="confirmSubmitHeelAdd($event)"
         class="flex flex-col gap-4 max-w-xl items-stretch mb-4 w-full">
-        <h1 class="text-4xl font-semibold text-center">Sarok hozzáadás</h1>
+        <h1 class="text-4xl font-semibold text-center">Sarok hozzáadása</h1>
         <label class="floating-label w-full">
             <span>Név</span>
             <input type="text" placeholder="Név" class="input w-full" formControlName="name" />
@@ -224,13 +217,116 @@
             <input type="number" placeholder="1000" min="1" class="input w-full" formControlName="price" />
         </label>
         <label class="floating-label w-full">
-            <span>Készleten</span>
+            <span>KÉszleten</span>
             <input type="number" placeholder="0" min="0" class="input w-full" formControlName="quantity" />
         </label>
         <div class="flex gap-2 justify-center">
             <button type="submit" [disabled]="heelAddForm.invalid || heelAddForm.pristine"
                 class="btn btn-outline btn-primary">Hozzáadás</button>
             <button type="button" (click)="toggleHeelAdding()" class="btn btn-neutral btn-outline">Mégsem</button>
+        </div>
+    </form>
+</div>
+}
+
+@if(!isOtherAdding()){
+@if (others()) {
+<p class="text-center font-serif text-2xl font-semibold">Egyéb@if(busyService.busyRequestCount() > 0)
+    {
+    <span class="loading loading-spinner loading-xl text-primary"></span>
+    }</p>
+@if(others()?.metadata; as metadata){
+<div class="flex gap-2 w-full">
+    <app-paginator [pageNumber]="metadata.currentPage" [totalCount]="metadata.totalCount" [pageSize]="metadata.pageSize"
+        (pageChange)="onPageChangeOthers($event)" [totalPages]="metadata.totalPages"
+        (searchChange)="onSearchOtherChange($event)">
+    </app-paginator>
+    @if(accountService.currentUser()?.roles?.includes('Admin')){
+
+    <div class="flex gap-2 items-center">
+        <input type="checkbox" class="checkbox" (change)="onIncludeArchivedOthersChanged($event)">
+        <p>Archiváltak</p>
+    </div>
+
+    <div class="ml-auto">
+        <button (click)="toggleOtherAdding()" class="btn btn-square btn-neutral"><svg xmlns="http://www.w3.org/2000/svg"
+                fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-8">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+        </button>
+    </div>
+    }
+</div>
+}
+<div class="flex flex-col gap-2 mb-4">
+    @if(others()?.items?.length! > 0){
+    @for (other of others()?.items; track $index) {
+    <div class="collapse collapse-arrow bg-base-100 border border-base-300 shadow-lg transition duration-200 hover:scale-101 hover:border-primary hover:border-2">
+        <input type="checkbox" name="my-accordion-2" />
+        <div class="collapse-title flex justify-between">
+            <div class="flex flex-col">
+                <div class="flex gap-2">
+                    <p class="font-semibold text-base-content">Név</p>
+                    @if(other.isArchived){
+                    <div class="badge badge-warning inline">Archivált</div>
+                    }@else {
+                    <div class="badge badge-success inline">Aktív</div>
+                    }
+                </div>
+                <div class="divider my-1"></div>
+                <p>{{other.name}}</p>
+            </div>
+            <div class="flex flex-col mr-4">
+                <p class="font-semibold text-base-content">Ár</p>
+                <div class="divider my-1"></div>
+                <p>{{other.price}}</p>
+            </div>
+            <div class="flex flex-col mr-4">
+                <p class="font-semibold text-base-content">Készleten</p>
+                <div class="divider my-1"></div>
+                <p>{{other.quantity}}</p>
+            </div>
+        </div>
+        <div class="collapse-content transition-all duration-500 ease-in-out h-0 overflow-hidden peer-checked:h-48">
+            <a routerLink="/stocks/others/{{other.id}}" class="btn btn-primary w-full">RÉSZLETEK
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                </svg>
+            </a>
+        </div>
+    </div>
+    }
+    }@else {
+    <p class="text-3xl font-semibold text-center">Nincsen találat a keresésre!</p>
+    }
+</div>
+}
+}
+
+@if(isOtherAdding()) {
+<div class="flex justify-center w-full">
+    <form [formGroup]="otherAddForm" (ngSubmit)="confirmSubmitOtherAdd($event)"
+        class="flex flex-col gap-4 max-w-xl items-stretch mb-4 w-full">
+        <h1 class="text-4xl font-semibold text-center">Egyeb termék hozzáadasa</h1>
+        <label class="floating-label w-full">
+            <span>Név</span>
+            <input type="text" placeholder="Név" class="input w-full" formControlName="name" />
+        </label>
+        <label class="floating-label w-full">
+            <span>Ár</span>
+            <input type="number" placeholder="1000" min="1" class="input w-full" formControlName="price" />
+        </label>
+        <label class="floating-label w-full">
+            <span>Készleten</span>
+            <input type="number" placeholder="0" min="0" class="input w-full" formControlName="quantity" />
+        </label>
+        <div class="flex gap-2 justify-center">
+            <button type="submit" [disabled]="otherAddForm.invalid || otherAddForm.pristine"
+                class="btn btn-outline btn-primary">Hozzáadás</button>
+            <button type="button" (click)="toggleOtherAdding()" class="btn btn-neutral btn-outline">Mégsem</button>
         </div>
     </form>
 </div>

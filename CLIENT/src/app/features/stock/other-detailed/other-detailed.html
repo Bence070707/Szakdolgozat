@@ -1,0 +1,95 @@
+@if (currentOther(); as other) {
+<div class="flex gap-4">
+    <div class="w-1/2 shadow-md rounded">
+        <img class="w-full h-[80vh] border border-base-300 rounded-lg" src="fallback.jpg" alt="image of the item">
+    </div>
+
+    @if(!isEditMode()){
+    <div class="w-1/2 bg-base-200 p-4 rounded-lg shadow-md flex flex-col justify-between">
+        <div class="flex justify-between">
+            <div>
+                <h1 class="text-3xl font-bold mb-4">Egyéb Reszletek
+                    @if(currentOther()?.isArchived){
+                    <p class="text-warning inline">(Archivált)</p>
+                    }@else {
+                    <p class="text-success inline">(Aktív)</p>
+                    }
+                </h1>
+                <div class="mb-2">
+                    <span class="font-semibold">Név:</span> {{other.name}}
+                </div>
+                <div class="mb-2">
+                    <span class="font-semibold">Ár:</span> {{other.price}}
+                </div>
+                <div class="mb-2">
+                    <span class="font-semibold">Készleten:</span> {{other.quantity}}
+                </div>
+            </div>
+            <div class="space-x-2">
+                @if(accountService.currentUser()?.roles?.includes('Admin')){
+
+                <button (click)="currentOther()?.isArchived ? confirmUnArchive() : confirmArchive()"
+                    [class.btn-warning]="!currentOther()?.isArchived" [class.btn-success]="currentOther()?.isArchived"
+                    class="btn btn-circle">
+                    @if(!currentOther()?.isArchived){
+
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
+                    </svg>
+                    }@else {
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    }
+
+                </button>
+                }
+                <button (click)="goBack()" class="btn btn-primary btn-circle"><svg xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <button class="btn btn-info btn-dash align-bottom" (click)="toggleEdit()">Szerkesztes<svg
+                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+            </svg></button>
+    </div>
+    }@else {
+    <form class="flex flex-col gap-4 w-1/2" [formGroup]="otherForm" (ngSubmit)="updateOther(other.id)">
+        <fieldset class="fieldset">
+            <legend class="fieldset-legend">Nev:</legend>
+            <input type="text" class="input w-full" placeholder="Nev" formControlName="name" />
+        </fieldset>
+        <fieldset class="fieldset">
+            <legend class="fieldset-legend">Ar:</legend>
+            <input type="number" class="input w-full" placeholder="Ar" formControlName="price" />
+        </fieldset>
+        <fieldset class="fieldset">
+            <legend class="fieldset-legend">Keszleten:</legend>
+            <input type="number" class="input w-full" placeholder="Keszleten" formControlName="quantity" />
+        </fieldset>
+        <div class="join">
+            <button [disabled]="!otherForm.valid || otherForm.untouched"
+                class="btn btn-primary w-1/2 self-center join-item rounded-l-full" type="submit">Szerkesztes<svg
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                </svg>
+            </button>
+            <button class="btn btn-dash w-1/2 self-center join-item rounded-r-full" type="button"
+                (click)="toggleEdit()">Megsem</button>
+        </div>
+    </form>
+    }
+</div>
+}

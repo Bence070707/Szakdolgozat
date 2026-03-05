@@ -1,6 +1,6 @@
 export interface SellableItemUI {
     productId: string;
-    type: 'KEY' | 'HEEL';
+    type: 'KEY' | 'HEEL' | 'OTHER';
 
     imageUrl?: string;
 
@@ -53,5 +53,26 @@ export class HeelToSellUI implements SellableItemUI {
 
         this.unitPrice = heel.price;
         this.quantity = heel.quantity;
+    }
+}
+
+export class OtherToSellUI implements SellableItemUI {
+    productId: string;
+    name: string;
+    type: 'OTHER' = 'OTHER';
+
+    imageUrl?: string;
+
+    quantity: number;
+    unitPrice: number;
+
+
+    constructor(other: any) {
+        this.productId = other.id;
+        this.name = other.name;
+        this.imageUrl = other.imageUrl ?? 'fallback.jpg';
+
+        this.unitPrice = other.price;
+        this.quantity = other.quantity;
     }
 }

@@ -22,7 +22,6 @@ namespace API.Controllers
             var userList = new List<object>();
             foreach (var user in users)
             {
-                if(user.Id == User.FindFirstValue(ClaimTypes.NameIdentifier)) continue;
                 var roles = await userManager.GetRolesAsync(user);
                 userList.Add(new
                 {
@@ -47,6 +46,8 @@ namespace API.Controllers
             var user = await userManager.FindByIdAsync(id);
 
             if (user is null) return BadRequest("Nem található felhasználó!");
+
+            if(user.Id == User.FindFirstValue(ClaimTypes.NameIdentifier)) return BadRequest("Saját szerepkör módosítása nem engedélyezett!");
 
             var userRoles = await userManager.GetRolesAsync(user);
 

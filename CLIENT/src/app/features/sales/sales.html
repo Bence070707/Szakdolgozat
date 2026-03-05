@@ -8,12 +8,16 @@
         @if (isKey(item)) {
         <div class="w-1/5">
             <app-key-item (add)="addToSales($event)" [item]="item"></app-key-item>
-
         </div>
         }
         @if (isHeel(item)) {
         <div class="w-1/5">
             <app-heel-item (add)="addToSales($event)" [item]="item"></app-heel-item>
+        </div>
+        }
+        @if (isOther(item)) {
+        <div class="w-1/5">
+            <app-other-item (add)="addToSales($event)" [item]="item"></app-other-item>
         </div>
         }
         }
@@ -40,6 +44,12 @@
                 (increment)="addToSales($event)" [item]="item"></app-key-item-cart>
         </div>
         }
+        @if (isOther(item)) {
+        <div class="w-full">
+            <app-other-item-cart [item]="item" (delete)="deleteFromSales($event)" (add)="addToSales($event)"
+                (decrement)="decrement($event)"></app-other-item-cart>
+        </div>
+        }
         }
         @if(salesSum() > 0){
         <div class="w-full flex justify-center mt-4">
@@ -52,3 +62,4 @@
         </div>
         }
     </div>
+</div>

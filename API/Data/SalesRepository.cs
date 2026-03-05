@@ -25,8 +25,8 @@ public class SalesRepository(AppDbContext context) : ISalesRepository
                 Quantity = item.Quantity,
                 UnitPrice = unitPrice
             });
-
         }
+
         sale.TotalAmount = sale.Items.Sum(s => s.LineTotal);
         sale.UserId = userId;
         context.Sales.Add(sale);
@@ -35,16 +35,17 @@ public class SalesRepository(AppDbContext context) : ISalesRepository
         await transaction.CommitAsync();
     }
 
-
     private async Task<int> GetUnitPriceAsync(CreateSaleItemDTO item)
     {
         return item.ProductType switch
         {
             ProductType.KEY => (await context.Keys.FindAsync(item.ProductId))?.Price
-            ?? throw new Exception("Nem található kulcs."),
+                ?? throw new Exception("Nem talalhato kulcs."),
             ProductType.HEEL => (await context.Heels.FindAsync(item.ProductId))?.Price
-            ?? throw new Exception("Nem található sarok."),
-            _ => throw new Exception("Nem található termék.")
+                ?? throw new Exception("Nem talalhato sarok."),
+            ProductType.OTHER => (await context.Others.FindAsync(item.ProductId))?.Price
+                ?? throw new Exception("Nem talalhato egyeb termek."),
+            _ => throw new Exception("Nem talalhato termek.")
         };
     }
 
@@ -53,16 +54,22 @@ public class SalesRepository(AppDbContext context) : ISalesRepository
         switch (item.ProductType)
         {
             case ProductType.KEY:
-                var key = await context.Keys.FindAsync(item.ProductId) ?? throw new Exception("Nem található kulcs");
+                var key = await context.Keys.FindAsync(item.ProductId) ?? throw new Exception("Nem talalhato kulcs");
 
-                if (key.Quantity < item.Quantity) throw new Exception("Nincs elég készlet a kulcsból.");
+                if (key.Quantity < item.Quantity) throw new Exception("Nincs eleg keszlet a kulcsbol.");
                 key.Quantity -= item.Quantity;
                 break;
             case ProductType.HEEL:
-                var heel = await context.Heels.FindAsync(item.ProductId) ?? throw new Exception("Nem található sarok");
+                var heel = await context.Heels.FindAsync(item.ProductId) ?? throw new Exception("Nem talalhato sarok");
 
-                if (heel.Quantity < item.Quantity) throw new Exception("Nincs elég készlet a sarokból.");
+                if (heel.Quantity < item.Quantity) throw new Exception("Nincs eleg keszlet a sarokbol.");
                 heel.Quantity -= item.Quantity;
+                break;
+            case ProductType.OTHER:
+                var other = await context.Others.FindAsync(item.ProductId) ?? throw new Exception("Nem talalhato egyeb termek");
+
+                if (other.Quantity < item.Quantity) throw new Exception("Nincs eleg keszlet az egyeb termekbol.");
+                other.Quantity -= item.Quantity;
                 break;
         }
     }

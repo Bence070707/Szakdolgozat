@@ -7,6 +7,7 @@ import { Heel } from '../../../../types/Heel';
 import { Location } from '@angular/common';
 import { AccountService } from '../../../core/services/account-service';
 import { StockMovementService } from '../../../core/services/stock-movement-service';
+import { ConfirmService } from '../../../core/services/confirm-service';
 
 @Component({
   selector: 'app-heel-detailed',
@@ -17,6 +18,7 @@ import { StockMovementService } from '../../../core/services/stock-movement-serv
 export class HeelDetailed {
   private heelsService = inject(HeelsService);
   private stocksService = inject(StockMovementService);
+  private confirmService = inject(ConfirmService);
   protected currentHeel = signal<Heel | null>(null);
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
@@ -42,6 +44,16 @@ export class HeelDetailed {
         console.error('Error fetching heel:', err);
       }
     })
+  }
+
+  async confirmArchiveHeel(){
+    const ok = await this.confirmService.confirm('Biztos archiválod a sarkat?');
+    if(ok) this.archiveHeel();
+  }
+
+  async confirmUnArchiveHeel(){
+    const ok = await this.confirmService.confirm('Biztos aktiválod a sarkat?');
+    if(ok) this.unArchiveHeel();
   }
 
   archiveHeel() {
@@ -75,6 +87,12 @@ export class HeelDetailed {
   protected toggleEdit(value?: boolean) {
     this.isEditMode.update(x => value ?? !x);
     if (this.currentHeel()) this.heelForm.patchValue(this.currentHeel() as Heel);
+  }
+
+  async confirmSubmit(event: Event, id: string){
+    event.stopPropagation();
+    const ok = await this.confirmService.confirm('Biztosan frissíted a készletet?');
+    if(ok) this.updateHeel(id);
   }
 
   updateHeel(id: string) {

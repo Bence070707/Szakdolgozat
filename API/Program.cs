@@ -23,6 +23,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 builder.Services.AddCors();
 builder.Services.AddScoped<IKeysRepository, KeysRepository>();
 builder.Services.AddScoped<IHeelsRepository, HeelsRepository>();
+builder.Services.AddScoped<IOthersRepository, OthersRepository>();
 builder.Services.AddScoped<ISalesRepository, SalesRepository>();
 builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
 builder.Services.AddScoped<IReportsRepository, ReportsRepository>();
