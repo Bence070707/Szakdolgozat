@@ -9,6 +9,7 @@ import { Paginator } from '../../../partials/paginator/paginator';
 import { RouterLink } from "@angular/router";
 import { SummarisedOrderItem } from '../../../../types/SummarisedOrderItem';
 import { ConfirmService } from '../../../core/services/confirm-service';
+import { AccountService } from '../../../core/services/account-service';
 
 @Component({
   selector: 'app-history',
@@ -21,6 +22,7 @@ export class History implements OnInit {
   protected selectedOrder: Order | null = null;
   private orderService = inject(OrderService);
   private toastService = inject(ToastService);
+  protected accountService = inject(AccountService);
   private confirmService = inject(ConfirmService);
   protected orders = signal<PaginatedResult<Order> | null>(null); 
   pageNumber = 1;

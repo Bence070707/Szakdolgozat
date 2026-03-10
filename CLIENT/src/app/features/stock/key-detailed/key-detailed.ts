@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { KeysService } from '../../../core/services/keys-service';
 import { Key } from '../../../../types/Key';
 import { ActivatedRoute } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastService } from '../../../core/services/toast-service';
 import { Location } from '@angular/common';
 import { AccountService } from '../../../core/services/account-service';
@@ -23,24 +23,23 @@ export class KeyDetailed implements OnInit {
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
   protected isEditMode = signal(false);
-  private toastService = inject(ToastService)
+  private toastService = inject(ToastService);
   protected accountService = inject(AccountService);
   private location = inject(Location);
+  protected selectedImages = signal<File[]>([]);
 
   protected keyForm = this.fb.nonNullable.group({
     price: [0, Validators.required],
     priceType: [1, Validators.required],
     quantity: [0, Validators.required]
-  })
-
+  });
 
   ngOnInit(): void {
     this.initKey();
-
   }
 
   initKey() {
-    const id = this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
         this.keysService.getKeyById(id).subscribe({
@@ -51,32 +50,53 @@ export class KeyDetailed implements OnInit {
           error: (err) => {
             console.error('Error fetching key:', err);
           }
-        })
-      };
-    })
+        });
+      }
+    });
+  }
+
+  async confirmDelete(publicId: string){
+    const ok = await this.confirmService.confirm('Biztosan törlöd a képet?');
+    if (ok) this.deleteImage(publicId);
   }
 
   async confirmArchiveKey() {
-    const ok = await this.confirmService.confirm('Biztosan archiválod?');
+    const ok = await this.confirmService.confirm('Biztosan archivalsz?');
     if (ok) this.archiveKey();
   }
 
   async confirmUnArchiveKey() {
-    const ok = await this.confirmService.confirm('Biztosan aktiválod?');
+    const ok = await this.confirmService.confirm('Biztosan aktivalod?');
     if (ok) this.unArchiveKey();
+  }
+
+  deleteImage(publicId: string){
+      this.keysService.deleteImage(publicId).subscribe({
+        next: () => {
+          this.currentKey.update(key => {
+            if (!key) return key;
+            return { ...key, images: key.images.filter(img => img.publicId !== publicId) };
+          });
+          this.toastService.success('Kép sikeresen törölve.');
+        },
+        error: (err) => {
+          console.error('Error deleting image:', err);
+          this.toastService.error('Valami hiba történt a kép törlésekor.');
+        }
+      });
   }
 
   archiveKey() {
     if (this.currentKey()) {
       this.keysService.archiveKey(this.currentKey()?.id!).subscribe({
         next: () => {
-          this.toastService.success("Kulcs sikeresen archiválva.");
+          this.toastService.success('Kulcs sikeresen archvivalva.');
           this.currentKey.update(y => {
             if (!y) return y;
             return { ...y, isArchived: true };
-          })
+          });
         }
-      })
+      });
     }
   }
 
@@ -84,25 +104,33 @@ export class KeyDetailed implements OnInit {
     if (this.currentKey()) {
       this.keysService.unArchiveKey(this.currentKey()?.id!).subscribe({
         next: () => {
-          this.toastService.success("Kulcs sikeresen aktiválva.");
+          this.toastService.success('Kulcs sikeresen aktivalva.');
           this.currentKey.update(y => {
             if (!y) return y;
             return { ...y, isArchived: false };
-          })
+          });
         }
-      })
+      });
     }
   }
 
   protected toggleEdit(value?: boolean) {
-    this.isEditMode.update(x => value ?? !x);
-    if (this.currentKey()) this.keyForm.patchValue(this.currentKey() as Key);
+    const nextValue = value ?? !this.isEditMode();
+    this.isEditMode.set(nextValue);
+
+    if (this.currentKey()) {
+      this.keyForm.patchValue(this.currentKey() as Key);
+    }
+
+    if (!nextValue) {
+      this.selectedImages.set([]);
+    }
   }
 
-  async confirmUpdateKey(event: Event, id: string){
+  async confirmUpdateKey(event: Event, id: string) {
     event.stopPropagation();
-    const ok = await this.confirmService.confirm("Biztos frissíted a készletet?");
-    if(ok) this.updateKey(id);
+    const ok = await this.confirmService.confirm('Biztos frissited a keszletet?');
+    if (ok) this.updateKey(id);
   }
 
   updateKey(id: string) {
@@ -112,24 +140,28 @@ export class KeyDetailed implements OnInit {
         ...this.keyForm.getRawValue()
       } as Key;
 
-
-      this.keysService.updateKey(id, updatedKey).subscribe({
-        next: response => {
-          this.initKey();
+      this.keysService.updateKey(id, updatedKey, this.selectedImages()).subscribe({
+        next: updated => {
+          this.currentKey.set(updated);
           this.toggleEdit(false);
           this.keyForm.markAsUntouched();
-          this.toastService.success('Sikeres adatfrissítés.');
+          this.toastService.success('Sikeres adatfrissites.');
           this.stocksService.initApprovalCount();
         },
         error: (err) => {
           console.log(err);
-          this.toastService.error('Valami hiba történt.');
+          this.toastService.error('Valami hiba tortent.');
         }
-      })
+      });
     }
   }
 
   goBack() {
     this.location.back();
+  }
+
+  onImagesSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.selectedImages.set(Array.from(input.files ?? []));
   }
 }

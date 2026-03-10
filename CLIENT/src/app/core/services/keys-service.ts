@@ -26,8 +26,18 @@ export class KeysService {
     return this.http.get<Key>(this.url + 'keys/' + id);
   }
 
-  updateKey(id: string, key: Key) {
-    return this.http.put<Key>(this.url + 'keys/' + id, key)
+  updateKey(id: string, key: Key, images: File[] = []) {
+    const formData = new FormData();
+    formData.append('id', key.id);
+    formData.append('priceType', key.priceType.toString());
+    formData.append('price', key.price.toString());
+    formData.append('quantity', key.quantity.toString());
+
+    for (const image of images) {
+      formData.append('images', image);
+    }
+
+    return this.http.put<Key>(this.url + 'keys/' + id, formData)
   }
 
   getAllKeys() {
@@ -45,5 +55,10 @@ export class KeysService {
 
   createKey(key: CreateKeyDto){
     return this.http.post<{keyId: string}>(this.url + 'keys/createkey', key);
+  }
+
+  deleteImage(publicId: string){
+    const params = new HttpParams().set('publicId', publicId);
+    return this.http.delete(this.url + 'keys/deleteimage', { params });
   }
 }

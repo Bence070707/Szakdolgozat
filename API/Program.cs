@@ -1,6 +1,7 @@
 using System.Text;
 using API.Data;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,12 +21,15 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.Configure<CloudinaryInfo>(builder.Configuration.GetSection("CloudinaryInfo"));
+
 builder.Services.AddCors();
 builder.Services.AddScoped<IKeysRepository, KeysRepository>();
 builder.Services.AddScoped<IHeelsRepository, HeelsRepository>();
 builder.Services.AddScoped<IOthersRepository, OthersRepository>();
 builder.Services.AddScoped<ISalesRepository, SalesRepository>();
 builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
+builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<IReportsRepository, ReportsRepository>();
 builder.Services.AddScoped<IStockMovementRepository, StockMovementRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
@@ -39,7 +43,12 @@ builder.Services.AddIdentityCore<AppUser>(opt =>
     opt.Password.RequireUppercase = false;
     opt.User.RequireUniqueEmail = true;
 }).AddRoles<IdentityRole>()
-.AddEntityFrameworkStores<AppDbContext>();
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
+builder.Services.Configure<DataProtectionTokenProviderOptions>(opt =>
+{
+    opt.TokenLifespan = TimeSpan.FromMinutes(30);
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

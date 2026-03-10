@@ -11,7 +11,9 @@ public class KeysRepository(AppDbContext context, UserManager<AppUser> userManag
 {
     public async Task<Key?> FindKeyByIdAsync(string id)
     {
-        return await context.Keys.FindAsync(id);
+        return await context.Keys.
+        Include(x => x.Images)
+        .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public async Task<IReadOnlyList<Key>> GetAllKeysAsync(bool includeArchived = false)
@@ -19,6 +21,20 @@ public class KeysRepository(AppDbContext context, UserManager<AppUser> userManag
         return await context.Keys
             .Where(x => includeArchived || !x.IsArchived)
             .ToListAsync();
+    }
+
+    public async Task<KeyImage?> FindImageByPublicIdAsync(string publicId)
+    {
+        return await context.KeyImages.FirstOrDefaultAsync(x => x.PublicId == publicId);
+    }
+
+    public async Task<bool> DeleteImageByPublicIdAsync(string publicId)
+    {
+        var image = await context.KeyImages.FirstOrDefaultAsync(x => x.PublicId == publicId);
+        if (image is null) return false;
+
+        context.KeyImages.Remove(image);
+        return await context.SaveChangesAsync() > 0;
     }
 
     public async Task<PaginatedResult<Key>> GetKeysAsync(PagingParams pagingParams, bool includeArchived = false)
@@ -36,15 +52,15 @@ public class KeysRepository(AppDbContext context, UserManager<AppUser> userManag
         return await PaginationHelper.CreateAsync(query, pagingParams.PageNumber, pagingParams.PageSize);
     }
 
-    public async Task<bool> UpdateKey(string id, Key updatedKey, bool isAdmin, string userId)
+    public async Task<bool> UpdateKey(string id, Key updatedKey, IEnumerable<KeyImage>? newImages, bool isAdmin, string userId)
     {
         var product = await context.Keys.FindAsync(id);
-        if(product is null) return false;
+        if (product is null) return false;
 
-        if(id != updatedKey.Id) return false;
+        if (id != updatedKey.Id) return false;
 
         var user = await userManager.FindByIdAsync(userId);
-        if(user is null) return false;
+        if (user is null) return false;
 
         var movement = new StockMovement
         {
@@ -62,9 +78,15 @@ public class KeysRepository(AppDbContext context, UserManager<AppUser> userManag
         {
             product.Quantity = updatedKey.Quantity;
             product.Price = updatedKey.Price;
+            product.PriceType = updatedKey.PriceType;
 
             movement.Status = StockMovementStatus.ACCEPTED;
             movement.DecidedAt = DateTime.UtcNow;
+        }
+
+        if (newImages is not null)
+        {
+            context.KeyImages.AddRange(newImages);
         }
 
         context.StockMovements.Add(movement);
@@ -104,8 +126,13 @@ public class KeysRepository(AppDbContext context, UserManager<AppUser> userManag
             Price = createKeyDto.Price
         };
         context.Keys.Add(newKey);
-        var result =  await context.SaveChangesAsync() > 0;
-        if(result) return newKey.Id;
+        var result = await context.SaveChangesAsync() > 0;
+        if (result) return newKey.Id;
         return null;
+    }
+
+    public async Task<bool> SaveAllASync()
+    {
+        return await context.SaveChangesAsync() > 0;
     }
 }

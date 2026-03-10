@@ -64,7 +64,7 @@
             </p>
             }
         </div>
-        @if(order.purchaseOrderStatus === 2){
+        @if(order.purchaseOrderStatus === 2 && this.accountService.currentUser()?.roles?.includes('Admin')){
 
         <div class="h-full"><a routerLink="sentconfirmation/{{order.id}}"
                 class="btn btn-primary h-full uppercase transform hover:scale-90 transition duration-200">Beérkezett</a>

@@ -72,4 +72,12 @@ export class AccountService {
     const roles = playloadJson.role;
     user.roles = Array.isArray(roles) ? roles : [roles];
   }
+
+  sendForgotPasswordEmail(email: string){
+      return this.http.post(this.url + 'account/forgot-password', {email: email})
+  }
+
+  sendResetPassword(resetPasswordDto: {email: string, token: string, newPassword: string}){
+    return this.http.post(this.url + 'account/reset-password', resetPasswordDto)
+  }
 }

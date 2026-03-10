@@ -8,6 +8,7 @@ namespace API.Data;
 public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>(options)
 {
     public DbSet<Key> Keys { get; set; }
+    public DbSet<KeyImage> KeyImages { get; set; }
     public DbSet<Heel> Heels { get; set; }
     public DbSet<Other> Others { get; set; }
     public DbSet<Sale> Sales { get; set; }
@@ -33,6 +34,14 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
                     "Quantity >= 0"
                 );
             });
+        });
+
+        modelBuilder.Entity<KeyImage>(entity =>
+        {
+            entity.HasOne(ki => ki.Key)
+                .WithMany(k => k.Images)
+                .HasForeignKey(ki => ki.KeyId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         modelBuilder.Entity<Sale>()

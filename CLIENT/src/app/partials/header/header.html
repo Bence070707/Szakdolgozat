@@ -1,4 +1,5 @@
-<div class="navbar flex justify-between shadow-sm shadow-gray-800 bg-linear-90 from-primary/40 via-black/40 to-primary/40">
+<div
+    class="navbar flex justify-between shadow-sm shadow-gray-800 bg-linear-90 from-primary/40 via-black/40 to-primary/40">
     <a class="btn btn-ghost text-base-content">Cipőkulcs</a>
     @if (busyService.busyRequestCount() > 0) {
 
@@ -14,7 +15,7 @@
             class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Eladás</a>
         <a routerLinkActive="bg-primary text-white scale-103" routerLink="/orders"
             class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Bevételezés</a>
-            @if(accountService.currentUser()?.roles?.includes('Admin')){
+        @if(accountService.currentUser()?.roles?.includes('Admin')){
         <a routerLinkActive="bg-primary text-white scale-103" routerLink="/reports"
             class="btn btn-ghost text-base-content hover:bg-primary hover:text-white">Kimutatások</a>
 
@@ -35,19 +36,28 @@
         }
         @else{
 
-        <form class="flex gap-2" #loginForm="ngForm" (ngSubmit)="login()">
-            <label class="floating-label">
-                <span>Email</span>
-                <input [(ngModel)]="creds.email" type="text" placeholder="példa@példa.com" class="input input-md"
-                    name="email" />
-            </label>
-            <label class="floating-label">
-                <span>Jelszó</span>
-                <input [(ngModel)]="creds.password" type="password" placeholder="********" class="input input-md"
-                    name="password" />
-            </label>
-            <button type="submit" class="btn btn-md btn-primary">Bejelentkezés</button>
-        </form>
+        <div class="flex flex-col">
+            <div>
+                <form class="flex gap-2" #loginForm="ngForm" (ngSubmit)="login()">
+                    <label class="floating-label">
+                        <span>Email</span>
+                        <input [(ngModel)]="creds.email" type="text" placeholder="példa@példa.com"
+                            class="input input-md" name="email" />
+                    </label>
+                    <label class="floating-label">
+                        <span>Jelszó</span>
+                        <input [(ngModel)]="creds.password" type="password" placeholder="********"
+                            class="input input-md" name="password" />
+                    </label>
+                    <div class="flex flex-col gap-2">
+                        <button type="submit" class="btn btn-md btn-primary">Bejelentkezés</button>
+                        <a routerLink="forgot-password" class="text-left ml-0.5 link link-primary font-semibold">
+                            Elfelejtett jelszó
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
         }
     </div>
 </div>

@@ -20,7 +20,7 @@ export class Register {
     this.accountService.register(this.creds).subscribe({
       next: () =>
         {
-          this.toastService.success('Sikeresen bejelentkezett!');
+          this.toastService.info('Sikeresen regisztrált!<br>Várja meg, még egy admin aktiválja a fiókját');
           this.toggleRegister.emit();
         },
       error: error => {

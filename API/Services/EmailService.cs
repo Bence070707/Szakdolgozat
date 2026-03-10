@@ -7,17 +7,20 @@ using MimeKit;
 public class EmailService(IConfiguration config) : IEmailService
 {
     private readonly EmailSettings? _settings = config.GetSection("EmailSettings").Get<EmailSettings>();
-    private readonly string hobbykeyEmail = "gegeny.bence26@gmail.com";
 
-    public async Task SendEmailAsync(string subject, string body)
+    public async Task SendEmailAsync(string to, string subject, string body)
     {
-        if (_settings is null) return;
+        if (_settings is null)
+            throw new InvalidOperationException("EmailSettings section is missing from configuration.");
+        if (string.IsNullOrWhiteSpace(_settings.Password))
+            throw new InvalidOperationException("EmailSettings:Password is empty. Set a valid SMTP/App password.");
+
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(
             _settings.SenderName,
             _settings.SenderEmail));
 
-        message.To.Add(MailboxAddress.Parse(hobbykeyEmail));
+        message.To.Add(MailboxAddress.Parse(to));
         message.Subject = subject;
         body = body.Replace("\n", "<br>");
         message.Body = new TextPart("html")

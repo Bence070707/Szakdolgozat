@@ -78,6 +78,8 @@ namespace API.Controllers
         [HttpPost("{id}/submit")]
         public async Task<ActionResult> SubmitOrder(string id, OrderDTO orderDTO)
         {
+            if(!User.IsInRole("Admin"))
+                return Unauthorized("Csak adminisztrátorok tudják beküldeni a rendeléseket.");
             var result = await orderRepository.SubmitOrder(id, orderDTO);
             if (!result) return NotFound("Nem található rendelés.");
             return NoContent();

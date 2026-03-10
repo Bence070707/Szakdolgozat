@@ -26,7 +26,7 @@ export class Header {
       },
       error: err => {
         console.log(err);
-        this.toastService.error('Nem megfelelő jelszó vagy email cím.');
+        this.toastService.error('Nem megfelelő jelszó vagy email cím,<br>vagy a fiók nincsen aktiválva!');
       }
     })
   }

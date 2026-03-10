@@ -15,6 +15,8 @@ import { DetailedReport } from './features/reports/detailed-report/detailed-repo
 import { Accounts } from './features/accounts/accounts';
 import { adminGuard } from './core/guards/admin-guard';
 import { loginRequiredGuard } from './core/guards/login-required-guard';
+import { ForgotPassword } from './features/accounts/forgot-password/forgot-password';
+import { ResetPassword } from './features/accounts/reset-password/reset-password';
 
 export const routes: Routes = [
     {
@@ -37,16 +39,24 @@ export const routes: Routes = [
             ]
     },
     {
-        path: 'sales', component: Sales, canActivate: [loginRequiredGuard]
+        path: 'sales', 
+        component: Sales, 
+        canActivate: [loginRequiredGuard]
     },
     {
-        path: 'orders', component: Orders, canActivate: [loginRequiredGuard]
+        path: 'orders', 
+        component: Orders, 
+        canActivate: [loginRequiredGuard]
     },
     {
-        path: 'orders/sentconfirmation/:id', component: SentConfirmation, canActivate: [loginRequiredGuard]
+        path: 'orders/sentconfirmation/:id', 
+        component: SentConfirmation, 
+        canActivate: [adminGuard]
     },
     {
-        path: 'editdraft', component: NewOrder, canActivate: [loginRequiredGuard]
+        path: 'editdraft', 
+        component: NewOrder, 
+        canActivate: [loginRequiredGuard]
     },
     {
         path: 'reports',
@@ -61,6 +71,14 @@ export const routes: Routes = [
         path: 'accounts',
         component: Accounts,
         canActivate: [adminGuard]
+    },
+    {
+        path: 'forgot-password',
+        component: ForgotPassword
+    },
+    {
+        path: 'reset-password',
+        component: ResetPassword
     },
     {
         path: '**',

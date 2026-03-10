@@ -111,7 +111,7 @@ public class OrdersRepository(AppDbContext context, IEmailService emailService) 
 
         order.PurchaseOrderStatus = PurchaseOrderStatus.SEND;
         order.SentAt = DateTime.UtcNow;
-        await emailService.SendEmailAsync("Kulcsrendelés", orderDTO.SupplierEmail!);
+        await emailService.SendEmailAsync("gegeny.bence26@gmail.com", "Kulcsrendelés", orderDTO.SupplierEmail!);
         return await context.SaveChangesAsync() > 0;
     }
 

@@ -7,7 +7,15 @@ export interface Key {
     price: number;
     quantity: number;
     isArchived: boolean,
-    archivedAt: Date
+    archivedAt: Date,
+    images: KeyImage[];
+}
+
+export interface KeyImage {
+    id: number;
+    url: string;
+    publicId: string;
+    keyId: string;
 }
 
 export enum KeyPriceType {

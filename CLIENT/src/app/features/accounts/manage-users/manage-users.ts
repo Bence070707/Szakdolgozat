@@ -66,8 +66,8 @@ export class ManageUsers implements OnInit {
   }
 
   async confirmToggleArchive(user: ManagedUser) {
-    const action = user.isArchived ? 'visszaállítani' : 'archiválni';
-    const ok = await this.confirmService.confirm(`Biztosan ${action} szeretnéd a fiókot?`);
+    const action = user.isArchived ? 'aktiválni' : 'archiválni';
+    const ok = await this.confirmService.confirm(`Biztosan szeretnéd ${action} a fiókot?`);
     if (ok) {
       this.toggleArchive(user);
     }
