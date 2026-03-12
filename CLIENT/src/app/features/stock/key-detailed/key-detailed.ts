@@ -70,6 +70,31 @@ export class KeyDetailed implements OnInit {
     if (ok) this.unArchiveKey();
   }
 
+  async confirmSetMain(publicId: string, keyId: string){
+    const ok = await this.confirmService.confirm('Biztosan főképként állítod be?');
+    if(ok) this.setMainPhoto(publicId, keyId);
+  }
+
+  setMainPhoto(publicId: string, keyId: string){
+    this.keysService.setMainPhoto(publicId, keyId).subscribe({
+      next: () => {
+        this.currentKey.update(key => {
+          if (!key) return key;
+          const updatedImages = key.images.map(img => ({
+            ...img,
+            isMain: img.publicId === publicId
+          }));
+          return { ...key, images: updatedImages };
+        });
+        this.toastService.success('Főképpé állítva.');
+      },
+      error: (err) => {
+        console.error('Error setting main photo:', err);
+        this.toastService.error('Valami hiba történt a főképpé állításkor.');
+      }
+    })
+  }
+
   deleteImage(publicId: string){
       this.keysService.deleteImage(publicId).subscribe({
         next: () => {

@@ -16,6 +16,7 @@ export interface KeyImage {
     url: string;
     publicId: string;
     keyId: string;
+    isMain: boolean;
 }
 
 export enum KeyPriceType {

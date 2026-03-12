@@ -16,4 +16,5 @@ public interface IKeysRepository
     Task<bool> UnarchiveKeyAsync(string id);
     Task<string?> CreateKey(CreateKeyDto createKeyDto);
     Task<bool> SaveAllASync();
+    Task<bool> SetMainPhoto(string keyId, string publicId);
 }

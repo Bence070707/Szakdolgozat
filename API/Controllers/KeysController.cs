@@ -125,6 +125,11 @@ public class KeysController(IKeysRepository keysRepository, IImageService imageS
             ArchivedAt = baseKey.ArchivedAt
         };
 
+        if (updatedKey.Images.Count == 1)
+        {
+            updatedKey.Images.First().IsMain = true;
+        }
+
         var result = await keysRepository.UpdateKey(id, updatedKey, uploadedImages, isAdmin, userId);
         if (result)
         {
@@ -172,6 +177,15 @@ public class KeysController(IKeysRepository keysRepository, IImageService imageS
         var unarchived = await keysRepository.UnarchiveKeyAsync(id);
         if (!unarchived) return BadRequest("Hiba tortent a kulcs visszaallitasa soran");
 
+        return Ok();
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("set-main-photo")]
+    public async Task<ActionResult> SetMainPhoto(string keyId, string publicId)
+    {
+        var result = await keysRepository.SetMainPhoto(keyId, publicId);
+        if (!result) return BadRequest("Valami hiba történt");
         return Ok();
     }
 

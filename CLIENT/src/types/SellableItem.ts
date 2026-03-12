@@ -22,9 +22,11 @@ export class KeyToSellUI implements SellableItemUI {
     jmaCode?: string;
 
     constructor(key: any) {
+        const mainImageUrl = key.images?.find((image: any) => image.isMain)?.url;
+
         this.productId = key.id;
         this.silcaCode = key.silcaCode;
-        this.imageUrl = key.imageUrl ?? 'fallback.jpg';
+        this.imageUrl = mainImageUrl ?? key.imageUrl ?? 'fallback.jpg';
 
         this.unitPrice = key.price;
         this.quantity = key.quantity;

@@ -61,4 +61,11 @@ export class KeysService {
     const params = new HttpParams().set('publicId', publicId);
     return this.http.delete(this.url + 'keys/deleteimage', { params });
   }
+
+  setMainPhoto(publicId: string, keyId: string){
+    let params = new HttpParams();
+    params = params.append('publicId', publicId);
+    params = params.append('keyId', keyId);
+    return this.http.post(this.url + 'keys/set-main-photo', null, { params });
+  }
 }

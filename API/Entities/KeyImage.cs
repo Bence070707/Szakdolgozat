@@ -9,6 +9,7 @@ public class KeyImage
     public required string Url { get; set; }
     public string? PublicId { get; set; }
     public string KeyId { get; set; } = default!;
+    public bool IsMain { get; set; } = false;
     [JsonIgnore]
     public Key Key { get; set; } = default!;
 }

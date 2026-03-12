@@ -2,7 +2,9 @@ using API.DTOs;
 using API.Entities;
 using API.Helpers;
 using API.Interfaces;
+using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
@@ -19,6 +21,7 @@ public class KeysRepository(AppDbContext context, UserManager<AppUser> userManag
     public async Task<IReadOnlyList<Key>> GetAllKeysAsync(bool includeArchived = false)
     {
         return await context.Keys
+            .Include(x => x.Images)
             .Where(x => includeArchived || !x.IsArchived)
             .ToListAsync();
     }
@@ -133,6 +136,20 @@ public class KeysRepository(AppDbContext context, UserManager<AppUser> userManag
 
     public async Task<bool> SaveAllASync()
     {
+        return await context.SaveChangesAsync() > 0;
+    }
+
+    public async Task<bool> SetMainPhoto(string keyId, string publicId)
+    {
+        var key = await context.Keys.Include(x=>x.Images).FirstOrDefaultAsync(x => x.Id == keyId);
+        if(key is null) return false;
+        var image = key.Images.FirstOrDefault(x => x.PublicId == publicId);
+        if(image is null) return false;
+        image.IsMain = true;
+        foreach(var img in key.Images.Where(x => x.Id != image.Id))
+        {
+            img.IsMain = false;
+        }
         return await context.SaveChangesAsync() > 0;
     }
 }
