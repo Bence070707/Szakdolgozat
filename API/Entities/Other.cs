@@ -8,4 +8,5 @@ public class Other
     public required int Quantity { get; set; }
     public bool IsArchived { get; set; }
     public DateTime? ArchivedAt { get; set; }
+    public ICollection<OtherImage> Images { get; set; } = [];
 }

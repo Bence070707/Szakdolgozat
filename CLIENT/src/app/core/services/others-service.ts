@@ -26,8 +26,18 @@ export class OthersService {
     return this.http.get<Other>(this.url + 'others/' + id);
   }
 
-  updateOther(id: string, other: Other) {
-    return this.http.put<Other>(this.url + 'others/' + id, other)
+  updateOther(id: string, other: Other, images: File[] = []) {
+    const formData = new FormData();
+    formData.append('id', other.id);
+    formData.append('name', other.name);
+    formData.append('price', other.price.toString());
+    formData.append('quantity', other.quantity.toString());
+
+    for (const image of images) {
+      formData.append('images', image);
+    }
+
+    return this.http.put<Other>(this.url + 'others/' + id, formData)
   }
 
   getAllOthers() {
@@ -44,5 +54,17 @@ export class OthersService {
 
   createOther(other: CreateOtherDto) {
     return this.http.post<{ otherId: string }>(this.url + 'others/createother', other);
+  }
+
+  deleteImage(publicId: string){
+    const params = new HttpParams().set('publicId', publicId);
+    return this.http.delete(this.url + 'others/deleteimage', { params });
+  }
+
+  setMainPhoto(publicId: string, otherId: string){
+    let params = new HttpParams();
+    params = params.append('publicId', publicId);
+    params = params.append('otherId', otherId);
+    return this.http.post(this.url + 'others/set-main-photo', null, { params });
   }
 }

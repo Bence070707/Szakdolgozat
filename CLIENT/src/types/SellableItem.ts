@@ -49,9 +49,11 @@ export class HeelToSellUI implements SellableItemUI {
 
 
     constructor(heel: any) {
+        const mainImageUrl = heel.images?.find((image: any) => image.isMain)?.url;
+
         this.productId = heel.id;
         this.code = heel.code;
-        this.imageUrl = heel.imageUrl ?? 'fallback.jpg';
+        this.imageUrl = mainImageUrl ?? heel.imageUrl ?? 'fallback.jpg';
 
         this.unitPrice = heel.price;
         this.quantity = heel.quantity;
@@ -70,9 +72,11 @@ export class OtherToSellUI implements SellableItemUI {
 
 
     constructor(other: any) {
+        const mainImageUrl = other.images?.find((image: any) => image.isMain)?.url;
+
         this.productId = other.id;
         this.name = other.name;
-        this.imageUrl = other.imageUrl ?? 'fallback.jpg';
+        this.imageUrl = mainImageUrl ?? other.imageUrl ?? 'fallback.jpg';
 
         this.unitPrice = other.price;
         this.quantity = other.quantity;

@@ -4,6 +4,15 @@ export interface Heel {
     price: number;
     quantity: number;
     isArchived: boolean,
-    archivedAt: Date
+    archivedAt: Date,
+    images: HeelImage[];
+}
+
+export interface HeelImage {
+    id: number;
+    url: string;
+    publicId: string;
+    heelId: string;
+    isMain: boolean;
 }
 

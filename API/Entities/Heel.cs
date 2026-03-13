@@ -8,4 +8,5 @@ public class Heel
     public required int Quantity { get; set; }
     public bool IsArchived { get; set; }
     public DateTime? ArchivedAt { get; set; }
+    public ICollection<HeelImage> Images { get; set; } = [];
 }

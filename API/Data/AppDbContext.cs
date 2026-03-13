@@ -10,7 +10,9 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
     public DbSet<Key> Keys { get; set; }
     public DbSet<KeyImage> KeyImages { get; set; }
     public DbSet<Heel> Heels { get; set; }
+    public DbSet<HeelImage> HeelImages { get; set; }
     public DbSet<Other> Others { get; set; }
+    public DbSet<OtherImage> OtherImages { get; set; }
     public DbSet<Sale> Sales { get; set; }
     public DbSet<SaleItem> SaleItems { get; set; }
     public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
@@ -41,6 +43,22 @@ public class AppDbContext(DbContextOptions options) : IdentityDbContext<AppUser>
             entity.HasOne(ki => ki.Key)
                 .WithMany(k => k.Images)
                 .HasForeignKey(ki => ki.KeyId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<HeelImage>(entity =>
+        {
+            entity.HasOne(hi => hi.Heel)
+                .WithMany(h => h.Images)
+                .HasForeignKey(hi => hi.HeelId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<OtherImage>(entity =>
+        {
+            entity.HasOne(oi => oi.Other)
+                .WithMany(o => o.Images)
+                .HasForeignKey(oi => oi.OtherId)
                 .OnDelete(DeleteBehavior.Cascade);
         });
 

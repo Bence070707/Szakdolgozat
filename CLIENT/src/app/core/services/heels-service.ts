@@ -26,8 +26,17 @@ export class HeelsService {
     return this.http.get<Heel>(this.url + 'heels/' + id);
   }
 
-  updateHeel(id: string, key: Heel) {
-    return this.http.put<Heel>(this.url + 'heels/' + id, key)
+  updateHeel(id: string, heel: Heel, images: File[] = []) {
+    const formData = new FormData();
+    formData.append('id', heel.id);
+    formData.append('price', heel.price.toString());
+    formData.append('quantity', heel.quantity.toString());
+
+    for (const image of images) {
+      formData.append('images', image);
+    }
+
+    return this.http.put<Heel>(this.url + 'heels/' + id, formData)
   }
 
   getAllHeels(){
@@ -44,5 +53,17 @@ export class HeelsService {
 
   createHeel(heel: CreateHeelDto){
     return this.http.post<{heelId: string}>(this.url + 'heels/createheel', heel);
+  }
+
+  deleteImage(publicId: string){
+    const params = new HttpParams().set('publicId', publicId);
+    return this.http.delete(this.url + 'heels/deleteimage', { params });
+  }
+
+  setMainPhoto(publicId: string, heelId: string){
+    let params = new HttpParams();
+    params = params.append('publicId', publicId);
+    params = params.append('heelId', heelId);
+    return this.http.post(this.url + 'heels/set-main-photo', null, { params });
   }
 }
